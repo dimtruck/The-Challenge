@@ -1,0 +1,10 @@
+I have a dream, which is to perform three competitions (Crossfit, Strongman, and Powerlifting) and WIN all of them within one year.  This application will do the following:
+
+1. Details for competitions I want to compete in
+2. Goals for the events within these competitions
+3. My current best marks for the events within these competitions
+4. A daily blog 
+5. A nutritional application, where I can add what I eat and drink
+6. A fitness application, where I can add what I trained
+
+All of this will be built on Ruby on Rails (my first real foray into the technology), Backbone, Knockout, and DynamoDB
