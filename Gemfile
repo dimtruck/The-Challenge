@@ -23,6 +23,8 @@ end
 group :test, :development do
   gem 'rspec-rails', '~> 2.6'
   gem 'aws-sdk'
+  gem 'watchr'
+  gem 'spork'
 end
 
 gem 'jquery-rails'
