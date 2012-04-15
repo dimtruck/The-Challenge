@@ -8,3 +8,50 @@ I have a dream, which is to perform three competitions (Crossfit, Strongman, and
 6. A fitness application, where I can add what I trained
 
 All of this will be built on Ruby on Rails (my first real foray into the technology), Backbone, Knockout, and DynamoDB
+
+
+Workout Calendar
+{
+	"Day": {
+		"dayOfWeek":"Monday",
+		"length":129383,
+		"Exercises": [
+			{
+				"name":"Bench Press",
+				"length":23485,
+				"Sets": [
+					{
+						"reps":10,
+						"weight":100
+					},
+					{
+						"reps":10,
+						"weight":100
+					},
+					{
+						"reps":10,
+						"weight":100
+					}
+				]
+			},
+			{
+				"name":"Incline Press",
+				"length":23485,
+				"Sets": [
+					{
+						"reps":10,
+						"weight":100
+					},
+					{
+						"reps":10,
+						"weight":100
+					},
+					{
+						"reps":10,
+						"weight":100
+					}
+				]
+			}
+		]
+	}
+}
