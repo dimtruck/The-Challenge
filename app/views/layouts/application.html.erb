@@ -2,13 +2,15 @@
 <html>
 <head>
   <title>TheChallenge</title>
-  <%= stylesheet_link_tag    "application", :media => "all" %>
-  <%= javascript_include_tag "application" %>
+  <%= stylesheet_link_tag "/assets/styles/kendo.mobile.all.min", :media => "all" %>
   <%= csrf_meta_tags %>
 </head>
 <body>
 
 <%= yield %>
-
+  <%= javascript_include_tag "/assets/js/jquery.min", "/assets/js/kendo.mobile.min" %>
+<script>
+    var app = new kendo.mobile.Application(document.body);
+</script>
 </body>
 </html>
