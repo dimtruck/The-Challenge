@@ -24,7 +24,11 @@ describe PostsController do
   # Post. As you add validations to Post, be sure to
   # update the return value of this method accordingly.
   def valid_attributes
-    {}
+    {
+		:content => 'this is valid content',
+		:title => 'valid title',
+		:post_type => 'diet'
+	}
   end
   
   # This should return the minimal set of values that should be in the session
@@ -34,36 +38,49 @@ describe PostsController do
     {}
   end
 
+  describe "GET new" do
+    it "assigns a new post as @post" do
+      get :new, {}, valid_session
+      assigns(:post).should be_a_new(Post)
+    end
+
+	it "renders the json view" do
+	  get :new, format: :json
+	  post = Post.new
+	  puts response.body
+	  JSON.parse(response.body).should == JSON.parse(post.to_json)
+	end
+
+	it "returns a 406 when trying to use anything but json" do
+	  get :new, {}, valid_session
+	  response.status.should == 406
+	end
+  end
+
   describe "GET index" do
     it "assigns all posts as @posts" do
       post = Post.create! valid_attributes
       get :index, {}, valid_session
       assigns(:posts).should eq([post])
     end
-  end
 
-  describe "GET show" do
-    it "assigns the requested post as @post" do
+	it "renders the json view" do
+	  expected = "[" + valid_attributes.to_json + "]"
       post = Post.create! valid_attributes
-      get :show, {:id => post.to_param}, valid_session
-      assigns(:post).should eq(post)
-    end
-  end
+	  expected = post.to_json
+	  get :index, format: :json
+	  
+	  JSON.parse(response.body)[0].should == JSON.parse(expected)
+	end
 
-  describe "GET new" do
-    it "assigns a new post as @post" do
-      get :new, {}, valid_session
-      assigns(:post).should be_a_new(Post)
-    end
-  end
-
-  describe "GET edit" do
-    it "assigns the requested post as @post" do
+	it "returns a 406 when trying to use anything but json" do
+	  expected = "[" + valid_attributes.to_json + "]"
       post = Post.create! valid_attributes
-      get :edit, {:id => post.to_param}, valid_session
-      assigns(:post).should eq(post)
-    end
-  end
+	  expected = post.to_json
+	  get :index
+	  response.status.should == 406
+	end
+end
 
   describe "POST create" do
     describe "with valid params" do
@@ -78,11 +95,12 @@ describe PostsController do
         assigns(:post).should be_a(Post)
         assigns(:post).should be_persisted
       end
-
+=begin
       it "redirects to the created post" do
         post :create, {:post => valid_attributes}, valid_session
         response.should redirect_to(Post.last)
       end
+=end
     end
 
     describe "with invalid params" do
@@ -92,15 +110,33 @@ describe PostsController do
         post :create, {:post => {}}, valid_session
         assigns(:post).should be_a_new(Post)
       end
-
+=begin
       it "re-renders the 'new' template" do
         # Trigger the behavior that occurs when invalid params are submitted
         Post.any_instance.stub(:save).and_return(false)
         post :create, {:post => {}}, valid_session
         response.should render_template("new")
       end
+=end
     end
   end
+
+  describe "GET show" do
+    it "assigns the requested post as @post" do
+      post = Post.create! valid_attributes
+      get :show, {:id => post.to_param}, valid_session
+      assigns(:post).should eq(post)
+    end
+  end
+
+  describe "GET edit" do
+    it "assigns the requested post as @post" do
+      post = Post.create! valid_attributes
+      get :edit, {:id => post.to_param}, valid_session
+      assigns(:post).should eq(post)
+    end
+  end
+
 
   describe "PUT update" do
     describe "with valid params" do

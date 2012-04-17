@@ -9,8 +9,6 @@
 
 <%= yield %>
   <%= javascript_include_tag "/assets/js/jquery.min", "/assets/js/kendo.mobile.min" %>
-<script>
-    var app = new kendo.mobile.Application(document.body);
-</script>
+<%= yield :js %>
 </body>
 </html>
