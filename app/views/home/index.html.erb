@@ -85,24 +85,28 @@
     </ul>
 </div>
 
-<div data-role="view" id="tabstrip-admin" data-title="Settings" data-layout="mobile-tabstrip">
+<div data-role="view" id="tabstrip-admin" data-title="Add Blog" data-layout="mobile-tabstrip">
     <ul data-role="listview" data-style="inset" data-type="group">
-        <li style="border:1px solid #000;">
-			<label for="blog-title">Title:</label>
-			<input type="text" id="blog-title" value="Title" class="k-textbox"/>
+        <li> Enter blog post here
+			<ul>
+				<li><label for="blog-title">Title:</label><input type="text" id="blog-title" value="Title" class="k-admin"/></li>
+				<li>
+					<label for="blog-type">Type:</label>
+					<select id="blog-type" class="k-admin">
+						<option value="diet">Diet</option>
+						<option value="training">Training</option>
+					</select>
+				</li>
+				<li>
+					<label for="blog-content">Content:</label>
+					<textarea id="blog-content" rows="4" cols="60" class="k-admin">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</textarea>
+				</li>
+				<li>
+					<a data-icon="add" data-role="button">Submit</a>
+				</li>
+			</ul>
 		</li>
-<!--		<li>
-			<label for="blog-twitter">Type:</label>
-			<input type="text" id="blog-type" value="diet" class="k-textbox" />
-		</li>
-		<li>
-			<label for="blog-content">Content:</label>
-			<textarea id="blog-content" rows="4" cols="60" class="k-textbox">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</textarea>
-		</li>-->
 	</ul>
-	<div>
-		<button id="preview" class="k-button">Preview</button>
-	</div>
 </div>
 
 <div data-role="view" id="contest-details" data-title="Contest Name Here" data-layout="mobile-tabstrip">
@@ -125,7 +129,7 @@
         <div data-role="navbar">
             <!--<a class="nav-button" data-align="left" data-role="backbutton">Back</a>-->
             <span data-role="view-title"></span>
-            <a data-align="right" data-role="button" class="nav-button" href="#index">Index</a>
+            <a data-align="right" data-role="button" class="nav-button" href="#tabstrip-profile">Profile</a>
         </div>
     </header>
 
@@ -138,50 +142,17 @@
             <a href="#tabstrip-contests" data-icon="about">Contests</a>
             <a href="#tabstrip-blog" data-icon="favorites">Blog</a>
 			<a href="#tabstrip-reports" data-icon="organize">Reports</a>
-			<a href="#tabstrip-admin" data-icon="organize">Admin</a>
+			<a href="#tabstrip-admin" data-icon="settings">Admin</a>
         </div>
     </div>
 </div>
 
 <style scoped>
-	.k-textbox,.k-picker-wrap .k-input,.k-button,.k-draghandle{
-	font-size:100%;font-family:inherit;border-style:solid;border-width:1px;-webkit-appearance:none
+	.k-admin{border: 1px solid #000 !important; float:left; position: relative !important; margin: 1px !important; background-color: #fff !important;}
+	#tabstrip-admin label {
+		float:left;
+		width: 150px;
 	}
-	.k-textbox{margin-top:0;margin-bottom:0;display:inline;}
-	
-	#panel {
-	background-image: none;
-	margin: -16px 0 30px;
-	padding: 30px 0 25px;
-	}
-	#panel input,
-	#panel textarea
-	{
-		font: inherit;
-		margin: -5px 0 5px;
-	}
-	#panel ul label
-    {
-        display: inline-block;
-        vertical-align: top;
-        width: 110px;
-        padding: 0 8px;
-        text-align: right;
-    }
-
-    #panel li
-    {
-        margin: 0.4em 0;
-    }
-
-    #panel h3.k-header
-    {
-        margin: 1.4em 0 1em;
-        padding: .4em 1.4em;
-        font-size: 1.4em;
-        border-radius: 2px;
-    }
-	
     #tabstrip-profile h2 {
         display: inline-block;
         font-size: 1.1em;
