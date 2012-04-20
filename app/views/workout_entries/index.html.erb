@@ -1,21 +1,117 @@
-<h1>Listing workout_entries</h1>
+<style>
+INPUT { margin: 2px 4px; }
+</style>
+<div>
 
-<table>
-  <tr>
-    <th></th>
-    <th></th>
-    <th></th>
-  </tr>
+<p>
+now: 5:18:58</p>
 
-<% @workout_entries.each do |workout_entry| %>
-  <tr>
-    <td><%= link_to 'Show', workout_entry %></td>
-    <td><%= link_to 'Edit', edit_workout_entry_path(workout_entry) %></td>
-    <td><%= link_to 'Destroy', workout_entry, confirm: 'Are you sure?', method: :delete %></td>
-  </tr>
-<% end %>
-</table>
+<p>
+same page, different domains: 
+&nbsp;&nbsp;
+<input type=button value="stevesouders dot com" onclick="document.location='http://stevesouders.' + 'com/navtiming.php'">
+&nbsp;&nbsp;| &nbsp; &nbsp;
+<input type=button value="sowrock dot com" onclick="document.location='http://sowrock.' + 'com/navtiming.php'">
+&nbsp;&nbsp;| &nbsp; &nbsp;
+<input type=button value="souders dot org" onclick="document.location='http://souders.' + 'org/navtiming.php'">
+</p>
 
-<br />
+<p id=results>
+</p>
+</div>
+<script>
+var gStart;
 
-<%= link_to 'New Workout entry', new_workout_entry_path %>
+(function() {
+	if ( "undefined" === typeof(performance) ) {
+		alert("ERROR: Navigation timing API was not found.");
+	}
+	else {
+		console.dir(window);
+		console.dir(performance);
+		window.performance.getEntries();
+		var perfData = window.performance;
+		console.dir(perfData);
+		
+		var resourceList = window.performance.getEntriesByType(window.performance.PERF_RESOURCE);
+		
+		console.dir(resourceList);
+		gStart = performance.timing.navigationStart;
+
+		
+		var msg = 
+			doTimeln("total time", performance.timing.navigationStart, performance.timing.loadEventEnd) +
+			doTimeln("dns", performance.timing.domainLookupStart, performance.timing.domainLookupEnd) +
+			doTimeln("connect", performance.timing.connectStart, performance.timing.connectEnd) +
+			doTimeln("ttfb", performance.timing.connectEnd, performance.timing.responseStart) +
+			doTimeln("HTML", performance.timing.responseStart, performance.timing.responseEnd) +
+			doTimeln("frontend", performance.timing.responseEnd, performance.timing.loadEventStart) +
+			"\n" +
+			doTimeln("navigationStart") +
+			doTimeln("unloadEventStart") +
+			doTimeln("unloadEventEnd") +
+			doTimeln("redirectStart") +
+			doTimeln("redirectEnd") +
+			doTimeln("fetchStart") +
+			doTimeln("domainLookupStart") +
+			doTimeln("domainLookupEnd") +
+			doTimeln("connectStart") +
+			doTimeln("connectEnd") +
+			doTimeln("secureConnectionStart") +
+			doTimeln("requestStart") +
+			doTimeln("responseStart") +
+			doTimeln("responseEnd") +
+			doTimeln("domLoading") +
+			doTimeln("domInteractive") +
+			doTimeln("domContentLoadedEventStart") +
+			doTimeln("domContentLoadedEventEnd") +
+			doTimeln("domComplete") +
+			doTimeln("loadEventStart") +
+			doTimeln("loadEventEnd") +
+			"";
+
+		document.getElementById('results').innerHTML = "<pre>" + msg + "</pre>";
+	}
+})();
+
+
+function doTimeln(label, t1, t2) {
+	var s = doTime(label, t1, t2);
+	return ( s ? s + "\n" : "" );
+}
+
+
+function doTime(label, t1, t2) {
+	if ( ! label ) {
+		return "";
+	}
+
+	if ( "undefined" === typeof(t1) ) {
+		if ( "undefined" === typeof(performance.timing[label]) ) {
+			return "";
+			return label + " is undefined";
+		}
+		else {
+			t1 = performance.timing[label];
+			t2 = undefined;
+		}
+	}
+
+	if ( 0 === t1 ) {
+		return "";
+		return label + " is 0";
+	}
+	else if ( t1 && "undefined" === typeof(t2) ) {
+		return formatTime(t1) + " = " + label + " (" + (t1-gStart) + ")";
+	}
+	else if ( t1 && t2 ) {
+		return label + " = " + (t2 - t1) + " ms";
+	}
+}
+
+
+function formatTime(t) {
+	var d = new Date(t);
+	return d.getHours() + ":" + ("0" + d.getMinutes()).slice(-2) + ":" + ("0" + d.getSeconds()).slice(-2) + "." + ("00" + d.getMilliseconds()).slice(-3);
+}
+</script>

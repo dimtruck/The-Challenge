@@ -95,12 +95,17 @@ end
         assigns(:post).should be_a(Post)
         assigns(:post).should be_persisted
       end
-=begin
-      it "redirects to the created post" do
-        post :create, {:post => valid_attributes}, valid_session
-        response.should redirect_to(Post.last)
-      end
-=end
+ 	  
+	  it "renders the json view" do
+		json = { :format => 'json', :post => valid_attributes }
+        post :create, json
+		response.status.should == 201
+	  end
+	  
+	  it "returns a 406 when trying to use anything but json" do 
+	    post :create, {:post => valid_attributes}, valid_session
+	    response.status.should == 406
+	  end
     end
 
     describe "with invalid params" do
@@ -119,6 +124,7 @@ end
       end
 =end
     end
+
   end
 
   describe "GET show" do

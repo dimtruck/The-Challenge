@@ -76,10 +76,16 @@
     <ul data-role="listview" data-style="inset" data-type="group">
         <li>
             My blog is here.  Enter posts with sorting by date
-            <ul>
-                <li>Notify when online <input type="checkbox" data-role="switch" checked></li>
-                <li>Administrator <input type="checkbox" data-role="switch"></li>
-                <li>Access to stats <input type="checkbox" data-role="switch" checked></li>
+            <ul data-bind="foreach: BlogNamespace.blogEntries">
+                <li>
+					<label class="blog-title" for="blog-title" data-bind="text: title"></label>
+					<div class="blog-content">
+						<div data-bind="text: content"></div>	
+						<div  class="blog-updated">
+							<label for="blog-updated">Updated on </label><span data-bind="text: updated_at"></span>
+						</div>
+					</div>
+				</li>
             </ul>
         </li>
     </ul>
@@ -89,6 +95,8 @@
     <ul data-role="listview" data-style="inset" data-type="group">
         <li> Enter blog post here
 			<ul>
+				<li class="errors" data-bind="foreach: BlogNamespace.errorMessage"><label data-bind="text: prop"></label> <span data-bind="text: errors"></span><br/></li>
+				<li class="success"><span data-bind="text: BlogNamespace.successMessage"></span></li>
 				<li><label for="blog-title">Title:</label><input type="text" id="blog-title"  data-bind="value: BlogNamespace.blog.Title" class="k-admin"/></li>
 				<li>
 					<label for="blog-type">Type:</label>
@@ -138,14 +146,33 @@
             <a href="#tabstrip-profile" data-icon="contacts">Profile</a>
             <a href="#tabstrip-calendar" data-icon="bookmarks">Calendar</a>
             <a href="#tabstrip-contests" data-icon="about">Contests</a>
-            <a href="#tabstrip-blog" data-icon="favorites">Blog</a>
+            <a href="#tabstrip-blog" data-icon="favorites" data-bind="click: BlogNamespace.viewBlogs">Blog</a>
 			<a href="#tabstrip-reports" data-icon="organize">Reports</a>
-			<a data-icon="settings" data-bind="click: BlogNamespace.newBlog">Admin</a>
+			<a href="#tabstrip-admin" data-icon="settings">Admin</a>
         </div>
     </div>
 </div>
 
 <style scoped>
+	.errors, .success {
+		font-size: 0.9em !important;
+	}
+	.success {
+		color:green !important;
+	}
+	.errors {
+		color:red !important;
+	}
+	
+	.blog-content{
+		padding: 5px;
+		font-weight: normal;
+	}
+
+	.blog-updated{
+		font-size: 0.6em;
+	}
+	
 	.k-admin{border: 1px solid #000 !important; float:left; position: relative !important; margin: 1px !important; background-color: #fff !important;}
 	#tabstrip-admin label {
 		float:left;
@@ -204,65 +231,86 @@
 			PostType: ko.observable()
 		};
 		self.loggedInUser = ko.observable();
-		self.errorMessage = ko.observable();
+		self.errorMessage = ko.observableArray([]);
+		self.blogEntries = ko.observableArray([]);
 		self.successMessage = ko.observable();
 
 		self.availableTypes = ko.observableArray(['diet','training']);
 
 		self.newBlog = function(){
+			console.log('hi');
 			self.blog.Title('');
 			self.blog.Content('');
 			self.blog.PostType('');
-			$("#tabstrip").data("kendoMobileTabStrip").switchTo("#tabstrip-admin");
-			location.href = "#tabstrip-admin";
+			return true;
 		};
 		
 		self.addBlog = function(){
-			console.log(self.blog.Title());
-			console.log(self.blog.Content());
-			console.log(self.blog.PostType());
-		}
-/*		self.addNewTask = function(){
-			//get current ideaId and add 1 to last entry for taskId
-			$.ajax('addNewTask',{
-				data: ko.toJSON({ userId: self.loggedInUser(), ideaId: self.current.IdeaId(), name: self.newTask.TaskDescription() }),
-				type: "post", contentType: "application/json",
-				success: function(result) {
-					var ideaList = self.ideas();
-					var tempTaskId = 0;
-					var currentIdea = {};
-					for(var i = 0; i < ideaList.length; i ++){
-						if(ideaList[i].IdeaId === self.current.IdeaId()){
-							var taskList = ideaList[i].IdeaTaskList;
-							for(var t = 0; t < taskList.length; t++){
-								if(taskList[t].IdeaTaskId > tempTaskId)
-								tempTaskId = taskList[t].IdeaTaskId;
-							}
-							tempTaskId ++;
-							var task = {
-								IdeaTaskId: tempTaskId,
-								IdeaTaskDescription: self.newTask.TaskDescription()
-							};
-							ideaList[i].IdeaTaskList.push(task);
-							currentIdea = ideaList[i];
-							break;
-						}
+			self.errorMessage.splice(0,self.errorMessage().length);
+			self.successMessage('');
+			$.ajax('posts.json', {
+				data: ko.toJSON({ title: self.blog.Title(), content: self.blog.Content(), post_type: self.blog.PostType() }),
+				type: 'post', contentType: 'application/json',
+				success: function(result){
+					console.log(result);
+					if(result.id && result.id > 0){
+						self.successMessage('Successfully added this blog on ' + result.created_at);
+						self.blog.Title('');
+						self.blog.Content('');
+						self.blog.PostType('');
+						self.blogEntries.push({
+							title: result.title,
+							content: result.content,
+							updated_at: result.updated_at,
+							id: result.id
+						});
+						self.blogEntries.reverse();
 					}
-					self.ideas(ideaList);
-					//add to current
-					var tempTaskList = [];
-					for(var i = 0; i < currentIdea.IdeaTaskList.length; i ++ )
-						tempTaskList.push(new IdeaTaskViewModel(currentIdea.IdeaTaskList[i].IdeaTaskId, currentIdea.IdeaTaskList[i].IdeaTaskDescription, currentIdea.IdeaTaskList[i].IdeaDate));
-					self.current.IdeaTaskList(tempTaskList);
-					self.newTask.TaskDescription('');
-					if($.mobile){
-						$.mobile.changePage('#idea-details');
-						$('#listOfIdeaTasks').listview('refresh');
-						$('#listOfIdeas').listview('refresh');
+				},
+				error: function(returnedObject,t2,t3){
+					var error = JSON.parse(returnedObject.responseText);
+					for(var prop in error){
+						self.errorMessage.push({
+							prop: prop,
+							errors: error[prop].join(', and ')
+						});
 					}
 				}
 			});
-		};*/
+		};
+		
+		self.viewBlogs = function(){
+			$.ajax('posts.json', {
+				type: 'get', contentType: 'application/json',
+				success: function(result){
+					for(var i = 0, max = result.length; i < max; i ++ ){
+						console.log(result[i].updated_at);
+						self.blogEntries.push({
+							title: result[i].title,
+							content: result[i].content,
+							updated_at: result[i].updated_at,
+							id: result[i].id
+						});
+					}
+					self.blogEntries.reverse();
+				},
+				error: function(returnedObject,t2,t3){
+					console.log(returnedObject);
+					console.log(t2);
+					console.log(t3);
+					var error = JSON.parse(returnedObject.responseText);
+					for(var prop in error){
+						self.errorMessage.push({
+							prop: prop,
+							errors: error[prop].join(', and ')
+						});
+					}
+				}
+			});
+		};
+
+		//load new data
+		self.viewBlogs();
 	}
 };
 
