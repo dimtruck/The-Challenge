@@ -78,11 +78,37 @@
             My blog is here.  Enter posts with sorting by date
             <ul data-bind="foreach: BlogNamespace.blogEntries">
                 <li>
-					<label class="blog-title" for="blog-title" data-bind="text: title"></label>
+					<label class="blog-title" for="blog-title" data-bind="text: title, click: BlogNamespace.showBlog"></label>
 					<div class="blog-content">
-						<div data-bind="text: content"></div>	
+						<div class='content' data-bind="attr: {id: 'content_' + id}">
+							<div data-bind="text: content"></div>	
+							<div class='edit-buttons'>
+								<a class="km-button" data-role="button" data-bind="click: BlogNamespace.showUpdateBlog">Edit</a>
+								<a class="km-button" data-role="button" data-bind="click: BlogNamespace.removeBlog">Remove</a>
+							</div>
+						</div>
 						<div  class="blog-updated">
 							<label for="blog-updated">Updated on </label><span data-bind="text: updated_at"></span>
+						</div>
+						<div  class="blog-updated">
+							<label for="blog-posttype">Entry for </label><span data-bind="text: post_type"></span>
+						</div>
+					</div>
+					<div data-bind="attr: {id: 'edit-blog-' + id }" class='edit-blog'>
+						<div class="errors" data-bind="foreach: BlogNamespace.blogToBeUpdated.errorMessage"><label data-bind="text: prop"></label> <span data-bind="text: errors"></span><br/></div>
+						<div class="success"><span data-bind="text: BlogNamespace.blogToBeUpdated.successMessage"></span></div>
+						<div><label for="blog-title">Title:</label><input type="text" id="blog-title"  data-bind="value: BlogNamespace.blogToBeUpdated.Title" class="k-admin"/></div>
+						<div>
+							<label for="blog-type">Type:</label>
+							<select id="blog-type" class="k-admin" data-bind="options: BlogNamespace.availableTypes, value: BlogNamespace.blogToBeUpdated.PostType">
+							</select>
+						</div>
+						<div>
+							<label for="blog-content">Content:</label>
+							<textarea id="blog-content" rows="4" cols="60" class="k-admin"  data-bind="value: BlogNamespace.blogToBeUpdated.Content"></textarea>
+						</div>
+						<div>
+							<a class="km-button" data-role="button" data-bind="click: BlogNamespace.updateBlog">Update</a>
 						</div>
 					</div>
 				</li>
@@ -154,6 +180,16 @@
 </div>
 
 <style scoped>
+	.content {
+		display:none;
+	}
+	.edit-blog{
+		display:none;
+	}
+	.edit-blog div {
+		float: left;
+		width: 100%;
+	}
 	.errors, .success {
 		font-size: 0.9em !important;
 	}
@@ -178,12 +214,28 @@
 		float:left;
 		width: 150px;
 	}
+	.edit-blog label {
+		float: left;
+		width: 150px;
+	}
+	
     #tabstrip-profile h2 {
         display: inline-block;
         font-size: 1.1em;
         margin: 1.5em 0 0 1em;
     }
+	.edit-blog h2{
+        display: inline-block;
+        font-size: 1.1em;
+        margin: 1.5em 0 0 1em;
+	}
     #tabstrip-profile h2 span {
+        display: block;
+        clear: both;
+        font-size: 2em;
+        margin: .2em 0 0 0;
+    }
+    .edit-blog h2 span {
         display: block;
         clear: both;
         font-size: 2em;
@@ -217,9 +269,10 @@
 
 <% content_for :js do %>
 <%= javascript_include_tag "/assets/knockout.2.0.0" %>
+
 <script>
 	$(function(){
-    var app = new kendo.mobile.Application(document.body);
+		var app = new kendo.mobile.Application(document.body);
 	});
 	
 	var BlogNamespace = {
@@ -230,6 +283,14 @@
 			Content: ko.observable(),
 			PostType: ko.observable()
 		};
+		self.blogToBeUpdated = {
+			Title: ko.observable(),
+			Content: ko.observable(),
+			PostType: ko.observable(),
+			Id: ko.observable(),
+			errorMessage: ko.observableArray([]),
+			successMessage: ko.observableArray()
+		};
 		self.loggedInUser = ko.observable();
 		self.errorMessage = ko.observableArray([]);
 		self.blogEntries = ko.observableArray([]);
@@ -237,12 +298,49 @@
 
 		self.availableTypes = ko.observableArray(['diet','training']);
 
-		self.newBlog = function(){
-			console.log('hi');
-			self.blog.Title('');
-			self.blog.Content('');
-			self.blog.PostType('');
-			return true;
+		self.showUpdateBlog = function(blog){
+			$('.edit-blog').css('display','none');
+			$('#edit-blog-' + blog.id).css('display','block');
+			self.blogToBeUpdated.errorMessage([]);
+			self.blogToBeUpdated.successMessage('');
+			self.blogToBeUpdated.Title(blog.title);
+			self.blogToBeUpdated.Content(blog.content);
+			self.blogToBeUpdated.PostType(blog.postType);
+			self.blogToBeUpdated.Id(blog.id);
+		};
+		
+		self.updateBlog = function(data){
+			self.blogToBeUpdated.errorMessage([]);
+			self.blogToBeUpdated.successMessage('');
+			$.ajax('posts/' + data.id + '.json', {
+				data: ko.toJSON({ title: self.blogToBeUpdated.Title(), content: self.blogToBeUpdated.Content(), post_type: self.blogToBeUpdated.PostType() }),
+				type: 'put', contentType: 'application/json',
+				success: function(result){
+					$('#edit-blog-' + data.id).css('display','none');
+					//update the array here
+					for(var i = 0, max = self.blogEntries().length; i < max; i ++ ){
+						if(self.blogEntries()[i].id === data.id){
+							self.blogEntries.replace(self.blogEntries()[i],{
+								title: self.blogToBeUpdated.Title(),
+								content: self.blogToBeUpdated.Content(),
+								post_type: self.blogToBeUpdated.PostType(),
+								updated_at: data.updated_at,
+								id: data.id
+							});
+							break;
+						}
+					}		
+					self.blogToBeUpdated.errorMessage([]);
+					self.blogToBeUpdated.successMessage('');
+					self.blogToBeUpdated.Title('');
+					self.blogToBeUpdated.Content('');
+					self.blogToBeUpdated.PostType('');
+					self.blogToBeUpdated.Id(0);
+				},
+				error: function(returnedObject, t2, t3){
+					console.log(returnedObject);
+				}
+			});
 		};
 		
 		self.addBlog = function(){
@@ -252,7 +350,6 @@
 				data: ko.toJSON({ title: self.blog.Title(), content: self.blog.Content(), post_type: self.blog.PostType() }),
 				type: 'post', contentType: 'application/json',
 				success: function(result){
-					console.log(result);
 					if(result.id && result.id > 0){
 						self.successMessage('Successfully added this blog on ' + result.created_at);
 						self.blog.Title('');
@@ -262,6 +359,7 @@
 							title: result.title,
 							content: result.content,
 							updated_at: result.updated_at,
+							post_type: result.post_type,
 							id: result.id
 						});
 						self.blogEntries.reverse();
@@ -279,20 +377,46 @@
 			});
 		};
 		
+		self.removeBlog = function(data){
+			$.ajax('posts/' + data.id + '.json', {
+				type: 'delete', contentType: 'application/json',
+				success: function(result){
+					self.successMessage('Successfully added this blog on ' + result.created_at);
+					self.blogEntries.remove(function(item){
+						return item.id === data.id
+					});
+					$('.content:first').css('display','block');
+				},
+				error: function(returnedObject,t2,t3){
+					console.log(returnedObject);
+					console.log(t2);
+					console.log(t3);
+					var error = JSON.parse(returnedObject.responseText);
+					for(var prop in error){
+						self.errorMessage.push({
+							prop: prop,
+							errors: error[prop].join(', and ')
+						});
+					}
+				}
+			});
+		}
+		
 		self.viewBlogs = function(){
 			$.ajax('posts.json', {
 				type: 'get', contentType: 'application/json',
 				success: function(result){
 					for(var i = 0, max = result.length; i < max; i ++ ){
-						console.log(result[i].updated_at);
 						self.blogEntries.push({
 							title: result[i].title,
 							content: result[i].content,
 							updated_at: result[i].updated_at,
+							post_type: result[i].post_type,
 							id: result[i].id
 						});
 					}
 					self.blogEntries.reverse();
+					$('.content:first').css('display','block');
 				},
 				error: function(returnedObject,t2,t3){
 					console.log(returnedObject);
@@ -308,9 +432,16 @@
 				}
 			});
 		};
+		
+		self.showBlog = function(blog){
+			$('.content').css('display','none');
+			$('.edit-blog').css('display','none');
+			$('#content_' + blog.id).css('display','block');
+		};
 
 		//load new data
 		self.viewBlogs();
+		
 	}
 };
 

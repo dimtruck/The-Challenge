@@ -47,7 +47,6 @@ describe PostsController do
 	it "renders the json view" do
 	  get :new, format: :json
 	  post = Post.new
-	  puts response.body
 	  JSON.parse(response.body).should == JSON.parse(post.to_json)
 	end
 
@@ -127,23 +126,6 @@ end
 
   end
 
-  describe "GET show" do
-    it "assigns the requested post as @post" do
-      post = Post.create! valid_attributes
-      get :show, {:id => post.to_param}, valid_session
-      assigns(:post).should eq(post)
-    end
-  end
-
-  describe "GET edit" do
-    it "assigns the requested post as @post" do
-      post = Post.create! valid_attributes
-      get :edit, {:id => post.to_param}, valid_session
-      assigns(:post).should eq(post)
-    end
-  end
-
-
   describe "PUT update" do
     describe "with valid params" do
       it "updates the requested post" do
@@ -152,20 +134,14 @@ end
         # specifies that the Post created on the previous line
         # receives the :update_attributes message with whatever params are
         # submitted in the request.
-        Post.any_instance.should_receive(:update_attributes).with({'these' => 'params'})
-        put :update, {:id => post.to_param, :post => {'these' => 'params'}}, valid_session
+        Post.any_instance.should_receive(:update_attributes).with({'title' => 'params'})
+        put :update, {:id => post.to_param, :post => {'title' => 'params'}}, valid_session
       end
 
       it "assigns the requested post as @post" do
         post = Post.create! valid_attributes
         put :update, {:id => post.to_param, :post => valid_attributes}, valid_session
         assigns(:post).should eq(post)
-      end
-
-      it "redirects to the post" do
-        post = Post.create! valid_attributes
-        put :update, {:id => post.to_param, :post => valid_attributes}, valid_session
-        response.should redirect_to(post)
       end
     end
 
@@ -178,14 +154,29 @@ end
         assigns(:post).should eq(post)
       end
 
-      it "re-renders the 'edit' template" do
-        post = Post.create! valid_attributes
+      it "redirects with errors" do
+		expected = "[" + valid_attributes.to_json + "]"
+
+  	    post = Post.create! valid_attributes
         # Trigger the behavior that occurs when invalid params are submitted
         Post.any_instance.stub(:save).and_return(false)
-        put :update, {:id => post.to_param, :post => {}}, valid_session
-        response.should render_template("edit")
+        put :update, {:id => post.to_param, :post => {}, :format => 'json'}, valid_session
+		response.status.should === 422
       end
-    end
+	end
+
+	it "renders the json view" do
+  	  post = Post.create! valid_attributes
+	  json = { :format => 'json', :post => valid_attributes,:id => post.to_param }
+	  put :update, json
+	  response.status.should === 204
+	end
+
+	it "returns a 406 when trying to use anything but json" do
+  	  post = Post.create! valid_attributes
+	  put :update, {:id => post.to_param, :post => valid_attributes}, valid_session
+	  response.status.should == 406
+	end
   end
 
   describe "DELETE destroy" do
@@ -196,11 +187,20 @@ end
       }.to change(Post, :count).by(-1)
     end
 
-    it "redirects to the posts list" do
+	it "renders the json view" do
       post = Post.create! valid_attributes
+	  json = { :format => 'json', :id => post.to_param }
+	  expected = post.to_json
+      delete :destroy, json
+	  response.status.should === 204
+	end
+
+	it "returns a 406 when trying to use anything but json" do
+      post = Post.create! valid_attributes
+	  expected = post.to_json
       delete :destroy, {:id => post.to_param}, valid_session
-      response.should redirect_to(posts_url)
-    end
+	  response.status.should == 406
+	end
   end
 
 end
