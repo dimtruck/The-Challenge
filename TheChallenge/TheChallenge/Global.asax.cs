@@ -57,6 +57,12 @@ namespace TheChallenge
             );
 
             routes.MapHttpRoute(
+                name: "Foods",
+                routeTemplate: "api/food",
+                defaults: new { controller = "food" }
+            );
+
+            routes.MapHttpRoute(
                 name: "Goals",
                 routeTemplate: "api/goal",
                 defaults: new { controller = "goal" }
@@ -162,6 +168,8 @@ namespace TheChallenge
                 .ForMember(dest => dest.EventGoal, opt => opt.ResolveUsing<ContestEventDataResolver>());
             AutoMapper.Mapper.CreateMap<ContestEventGoal, ContestEventGoalViewModel>()
                 .ForMember(dest => dest.Result, opt => opt.ResolveUsing<GoalDataResolver>());
+            AutoMapper.Mapper.CreateMap<Food, FoodViewModel>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Int32.Parse(src.Id)));
 
 
         }

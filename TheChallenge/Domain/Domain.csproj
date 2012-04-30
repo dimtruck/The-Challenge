@@ -48,9 +48,12 @@
     <Compile Include="Entities\CurrentStatistic.cs" />
     <Compile Include="Entities\Event.cs" />
     <Compile Include="Entities\ExerciseEntry.cs" />
+    <Compile Include="Entities\Food.cs" />
     <Compile Include="Entities\Workout.cs" />
     <Compile Include="Repository\ContestRepository.cs" />
     <Compile Include="Entities\Contest.cs" />
+    <Compile Include="Repository\FoodRepository.cs" />
+    <Compile Include="Repository\IFoodRepository.cs" />
     <Compile Include="Repository\ProfileRepository.cs" />
     <Compile Include="Repository\IProfileRepository.cs" />
     <Compile Include="Repository\WorkoutRepository.cs" />

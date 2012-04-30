@@ -128,6 +128,7 @@
   <ItemGroup>
     <Compile Include="Controllers\ContestController.cs" />
     <Compile Include="Controllers\ExerciseController.cs" />
+    <Compile Include="Controllers\FoodController.cs" />
     <Compile Include="Controllers\GoalController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ProfileController.cs" />
@@ -149,6 +150,7 @@
     <Compile Include="Models\CurrentLiftsViewModel.cs" />
     <Compile Include="Models\EventTypeEnum.cs" />
     <Compile Include="Models\EventViewModel.cs" />
+    <Compile Include="Models\FoodViewModel.cs" />
     <Compile Include="Models\SaveExerciseViewModel.cs" />
     <Compile Include="Models\SaveWorkoutViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

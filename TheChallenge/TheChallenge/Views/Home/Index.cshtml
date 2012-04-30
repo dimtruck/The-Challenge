@@ -229,6 +229,7 @@
 					                            <tr>
 						                            <th>Food</th>
 						                            <th>Serving Size</th>
+                                                    <th>Action</th>
 					                            </tr>
 				                            </thead>
 				                            <tbody data-template="preview-diet-row-template" data-bind="source: foods"></tbody>
@@ -259,6 +260,13 @@
         <td><button data-bind="click: deleteExercise" class="k-button">Delete</button></td>
     </tr>
 </script>
+<script id="preview-diet-row-template" type="text/x-kendo-template">
+    <tr>
+        <td data-bind="text: name"></td>
+        <td data-bind="text: servingSize"></td>
+        <td><button data-bind="click: deleteFood" class="k-button">Delete</button></td>
+    </tr>
+</script>
 <script id="preview-footer-template" type="text/x-kendo-template">
     <tr>
         <td colspan="5">
@@ -266,6 +274,16 @@
         </td>
 		<td>
 			<button id="save-exercise" class="k-button" data-bind="enabled: isEnabled, click: save">Save</button>
+		</td>
+    </tr>
+</script>
+<script id="preview-diet-footer-template" type="text/x-kendo-template">
+    <tr>
+        <td colspan="2">
+            Food count: #: total() #
+        </td>
+		<td>
+			<button id="save-meal" class="k-button" data-bind="enabled: isEnabled, click: save">Save</button>
 		</td>
     </tr>
 </script>
@@ -647,7 +665,7 @@
             events: new kendo.data.DataSource({
                 transport: {
                     read: {
-                        url: '@Url.RouteUrl("Exercises", new { httproute = "" })',
+                        url: '@Url.RouteUrl("Foods", new { httproute = "" })',
                         dataType: "json"
                     }
                 }
@@ -661,7 +679,7 @@
                     this.get("foods").push({
                         id: this.get("foodName").Id,
                         name: this.get("foodName").Name,
-                        servingSize: parseInt(this.get("reps"))
+                        servingSize: parseInt(this.get("dietServing"))
                     });
                     this.set("isEnabled", true);
                 }
@@ -725,6 +743,7 @@
 
 
         $("#workout-preview-table").kendoGrid();
+        $("#diet-preview-table").kendoGrid();
     });
 </script>
 </html>
