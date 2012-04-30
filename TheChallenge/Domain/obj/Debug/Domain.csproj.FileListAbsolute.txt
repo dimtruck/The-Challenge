@@ -1,7 +1,0 @@
-C:\Users\Dimitry\The-Challenge\TheChallenge\Domain\bin\Debug\Domain.dll
-C:\Users\Dimitry\The-Challenge\TheChallenge\Domain\bin\Debug\Domain.pdb
-C:\Users\Dimitry\The-Challenge\TheChallenge\Domain\bin\Debug\Dapper.dll
-C:\Users\Dimitry\The-Challenge\TheChallenge\Domain\bin\Debug\Dapper.pdb
-C:\Users\Dimitry\The-Challenge\TheChallenge\Domain\obj\Debug\ResolveAssemblyReference.cache
-C:\Users\Dimitry\The-Challenge\TheChallenge\Domain\obj\Debug\Domain.dll
-C:\Users\Dimitry\The-Challenge\TheChallenge\Domain\obj\Debug\Domain.pdb
