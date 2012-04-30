@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>ASP.NET Web API</title>
+    <link href="@System.Web.Optimization.BundleTable.Bundles.ResolveBundleUrl("~/Content/kendo/css")" rel="stylesheet" type="text/css" />
+    <meta name="viewport" content="width=device-width" />
+    <style>
+        #add-workout-panel label,#add-diet-panel label 
+        {
+            float:left;
+            font-family: 'Lucida Sans Unicode';
+            min-width:160px;
+            font-weight:bold;
+        }
+        
+        .workoutDate 
+        {
+            position:relative;
+            color: green;
+            font-weight:bold;
+            display: inline-block;
+            width: 25px;
+            height: 24px;
+            vertical-align: middle;
+            left: -10px;
+            top: -1px;
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <div class="content-wrapper">  
+                 
+            <div class="float-left">
+                <p class="site-title"><a href="/">ASP.NET Web API</a></p>
+            </div>
+        </div>
+    </header>
+    <div class="k-content">
+        <section class="featured">
+            <div id="the-challenge-container">
+                <div id="the-challenge-tabstrip">
+					<ul>
+						<li class="k-state-active">
+							Profile
+						</li>
+						<li>
+							Contests
+						</li>
+						<li>
+							Calendar
+						</li>
+						<li>
+							Blog
+						</li>
+						<li>
+							Reports
+						</li>
+						<li>
+							Admin
+						</li>
+					</ul>
+                    <div>
+                        <div class="sub-container">
+                            <h2>Dimitry Ushakov</h2>
+							<table id="currentLiftsTable">
+								<thead>
+									<tr>
+										<th>
+											Exercise/Routine
+										</th>
+										<th>
+											Last Executed
+										</th>
+										<th>
+											Result
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td colspan="3"></td>
+									</tr>
+								</tbody>
+							</table>
+                            <br />
+							<table id="goalsTable">
+								<thead>
+									<tr>
+										<th>
+											Exercise/Routine
+										</th>
+                                        <th>
+                                            Contest
+                                        </th>
+										<th>
+											Contest Date
+										</th>
+										<th>
+											Goal
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td colspan="4"></td>
+									</tr>
+								</tbody>
+							</table>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="sub-container">
+                            <h2>Contests</h2>
+							<table id="contestTable">
+								<thead>
+									<tr>
+										<th>
+											Exercise/Routine
+										</th>
+										<th>
+											Date
+										</th>
+										<th>
+											Place
+										</th>
+                                        <th>
+                                            Goal
+                                        </th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td colspan="4"></td>
+									</tr>
+								</tbody>
+							</table>
+                        </div>
+                    </div>
+                    <div>
+						<div class="sub-container">
+                            <div style="float:left; display:inline;padding:15px;">
+							    <div id="calendar"></div>
+                                <div>
+                                    <button class="k-button" id="add-workout" name="add-workout">Add Workout</button>
+                                    <button class="k-button" id="add-diet" name="add-diet">Add Diet</button>
+                                </div>
+                            </div>
+                            <div style="float:left;display:inline;padding:15px;">
+	                            <div id="add-workout-id" style="width:600px">
+		                            <div id="add-workout-panel" class="k-widget k-header" style="padding:10px;">
+                                        <div>
+                                            <label for="add-workout-date">Date:</label>
+                                            <input data-role="datepicker" data-bind="value: entryDate" />
+                                        </div>
+			                            <div>
+				                            <label for="add-workout-exercise">Exercise/Routine:</label>
+				                            <input data-role="autocomplete" data-text-field="Name" id="add-workout-exercise" data-bind="source: events, value: exerciseName"/>
+			                            </div>
+			                            <div>
+				                            <label for="add-workout-reps">Reps:</label>
+				                            <input data-role="numerictextbox" id="add-workout-reps" min="0" decimals="0" data-bind="value: reps" />
+			                            </div>
+			                            <div>
+				                            <label for="add-workout-weight">Weight:</label>
+				                            <input data-role="numerictextbox" id="add-workout-weight" min="0" decimals="1" data-bind="value: weight" />
+			                            </div>
+			                            <div>
+				                            <label for="add-workout-time">Time:</label>
+				                            <input type="text" pattern="\d{2}:\d{2}:\d{2}.\d{3}" id="add-workout-time" data-bind="value: time" />
+			                            </div>
+			                            <div>
+				                            <label for="add-workout-distance">Distance:</label>
+				                            <input data-role="numerictextbox" id="add-workout-distance" min="0" decimals="1" data-bind="value: distance" />
+			                            </div>
+			                            <button id="add" class="k-button" data-bind="click: addExercise">Add Exercise</button>
+		                            </div>
+
+		                            <div id="workout-preview">
+			                            <!-- do the remote binding + source and template binding here! -->
+			                            <table id="workout-preview-table">
+				                            <thead>
+					                            <tr>
+						                            <th>Exercise/Routine</th>
+						                            <th>Reps</th>
+						                            <th>Weight</th>
+						                            <th>Time</th>
+						                            <th>Distance</th>
+                                                    <th>Action</th>
+					                            </tr>
+				                            </thead>
+				                            <tbody data-template="preview-row-template" data-bind="source: exercises"></tbody>
+				                            <tfoot data-template="preview-footer-template" data-bind="source: this"></tfoot>
+			                            </table>                                        
+		                            </div>
+	                            </div>
+                            </div>
+                            <div style="float:left;display:inline;padding:15px;">
+			                    <div id="workout-view" style="width:700px"></div>
+                            </div>
+                            <div style="float:left;display:inline;padding:15px;">
+	                            <div id="add-diet-id" style="width:600px">
+		                            <div id="add-diet-panel" class="k-widget k-header" style="padding:10px;">
+                                        <div>
+                                            <label for="add-diet-date">Date:</label>
+                                            <input data-role="datepicker" data-bind="value: entryDate" />
+                                        </div>
+                                        <div>
+                                            <label for="add-diet-time">Time:</label>
+                                            <input data-role="timepicker" data-bind="value: entryTime" />
+                                        </div>
+			                            <div>
+				                            <label for="add-diet-name">Food:</label>
+				                            <input data-role="autocomplete" data-text-field="Name" id="add-diet-name" data-bind="source: events, value: foodName"/>
+			                            </div>
+			                            <div>
+				                            <label for="add-diet-serving">Servings:</label>
+				                            <input data-role="numerictextbox" id="add-diet-serving" min="0" decimals="1" data-bind="value: dietServing" />
+			                            </div>
+			                            <button id="addFood" class="k-button" data-bind="click: addFood">Add Food</button>
+		                            </div>
+
+		                            <div id="diet-preview">
+			                            <!-- do the remote binding + source and template binding here! -->
+			                            <table id="diet-preview-table">
+				                            <thead>
+					                            <tr>
+						                            <th>Food</th>
+						                            <th>Serving Size</th>
+					                            </tr>
+				                            </thead>
+				                            <tbody data-template="preview-diet-row-template" data-bind="source: foods"></tbody>
+				                            <tfoot data-template="preview-diet-footer-template" data-bind="source: this"></tfoot>
+			                            </table>                                        
+		                            </div>
+	                            </div>
+                            </div>
+                            <div style="clear:both;"></div>
+                        </div>
+                    </div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    
+                </div>
+            </div>
+        </section>
+    </div>
+</body>
+<script id="preview-row-template" type="text/x-kendo-template">
+    <tr>
+        <td data-bind="text: name"></td>
+        <td data-bind="text: reps"></td>
+        <td data-bind="text: weight"></td>
+        <td data-bind="text: time"></td>
+        <td data-bind="text: distance"></td>
+        <td><button data-bind="click: deleteExercise" class="k-button">Delete</button></td>
+    </tr>
+</script>
+<script id="preview-footer-template" type="text/x-kendo-template">
+    <tr>
+        <td colspan="5">
+            Exercises count: #: total() #
+        </td>
+		<td>
+			<button id="save-exercise" class="k-button" data-bind="enabled: isEnabled, click: save">Save</button>
+		</td>
+    </tr>
+</script>
+<script type="text/x-kendo-template" id="contest-events-template">
+    <div class="contest-events"></div>
+</script>
+<script src="http://code.jquery.com/jquery-1.7.1.min.js" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/kendo.all.min.js")" type="text/javascript"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#the-challenge-tabstrip").kendoTabStrip({
+            animation: {
+                open: {
+                    effects: "fadeIn"
+                }
+            }
+
+        });
+
+        var currentLiftsSource = new kendo.data.DataSource({
+            transport: {
+                read: {
+                    url: '@Url.RouteUrl("CurrentLifts", new { httproute = "" })'
+                },
+                type: 'json',
+                pagesize: 5
+
+            },
+            group: {
+                field: "EventType",
+                value: "Event Type"
+            }
+        });
+
+        var goalsSource = new kendo.data.DataSource({
+            transport: {
+                read: {
+                    url: '@Url.RouteUrl("Goals", new { httproute = "" })'
+                },
+                type: 'json',
+                pagesize: 5
+
+            }
+        });
+
+        var contestSource = new kendo.data.DataSource({
+            transport: {
+                read: {
+                    url: '@Url.RouteUrl("Contests", new { httproute = "" })'
+                },
+                type: 'json',
+                pagesize: 5
+            }
+        });
+
+        $("#contestTable").kendoGrid({
+            dataSource: contestSource,
+            sortable: true,
+            scrollable: true,
+            pageable: true,
+            detailTemplate: kendo.template($("#contest-events-template").html()),
+            detailInit: detailInit,
+            dataBound: function () {
+                this.expandRow(this.tbody.find("tr.k-master-row").first());
+            },
+            columns: [
+				{
+				    field: "Name",
+				    title: "Contest Name",
+				    width: 100
+				},
+				{
+				    field: "ContestDate",
+				    title: "Contest Date",
+				    template: '#= kendo.toString(new Date(parseInt(ContestDate.substr(6))),"MM/dd/yyyy") #',
+				    width: 75
+				},
+				{
+				    field: "Place",
+				    title: "Contest Location",
+				    width: 100
+				},
+				{
+				    field: "Details",
+				    title: "Contest Details",
+				    width: 100
+				}
+			]
+
+        });
+
+        $("#currentLiftsTable").kendoGrid({
+            dataSource: currentLiftsSource,
+            groupable: true,
+            pageable: true,
+            columns: [
+				{
+				    field: "Event",
+				    title: "Exercise Name",
+				    width: 100
+				},
+				{
+				    field: "DateLifted",
+				    title: "Date Lifted",
+				    template: '#= kendo.toString(new Date(parseInt(DateLifted.substr(6))),"MM/dd/yyyy") #',
+				    width: 75
+				},
+				{
+				    field: "Result",
+				    width: 100
+				}
+			]
+
+        });
+
+        $("#goalsTable").kendoGrid({
+            dataSource: goalsSource,
+            pageable: true,
+            columns: [
+				        {
+				            field: "Event.Name",
+				            title: "Exercise Name",
+				            width: 100
+				        },
+				        {
+				            field: "Contest.Name",
+				            title: "Contest Name",
+				            width: 75
+				        },
+				        {
+				            field: "Contest.ContestDate",
+				            template: '#= kendo.toString(new Date(parseInt(Contest.ContestDate.substr(6))),"MM/dd/yyyy") # (#= Math.ceil(((new Date(parseInt(Contest.ContestDate.substr(6)))).getTime() - (new Date()).getTime())/(1000*60*60*24)) # days left)',
+				            width: 100
+				        },
+				        {
+				            field: "Result",
+				            width: 100
+				        }
+			        ]
+
+        });
+        /**
+        THIS IS FOR CALENDAR
+        */
+
+        var dateResults = [];
+
+        function getWorkoutDates() {
+            $.ajax('@Url.RouteUrl("WorkoutDates", new { httproute = "" })', {
+                type: 'get', contentType: 'application/json',
+                success: function (result) {
+                    for (var i = 0, max = result.length; i < max; i++)
+                        dateResults.push(parseInt(result[i].substr(6, 13)));
+                    //+new Date(parseInt(result[i].substr(6)))
+                    $('#calendar').kendoCalendar({
+                        month: {
+                            // template for dates in month view
+                            content: '# if ($.inArray(+data.date, [' + dateResults + ']) != -1) { #' +
+                            '<div class="workoutDate">#=data.value#</div>' +
+                            '# } #' +
+                            '#= data.value #'
+                        },
+                        change: onChange
+                    });
+                    $("#contestTable").data("kendoGrid").dataSource.read();
+                },
+                error: function (returnedObject, t2, t3) {
+                    console.log(returnedObject);
+                    console.log(t2);
+                    console.log(t3);
+                }
+            });
+        }
+
+        getWorkoutDates();
+
+
+        function onChange() {
+            if ($.inArray(+this.value(), dateResults) != -1) {
+                $('#add-workout-id').css('display', 'none');
+                $.ajax('@Url.RouteUrl("WorkoutDates", new { httproute = "" })/' + kendo.toString(this.value(), 'MM-dd-yyyy'), {
+                    type: 'get', contentType: 'application/json',
+                    success: function (result) {
+                        $('#workout-view').empty();
+                        $('#workout-view').css('display', 'block');
+                        $('#workout-view').kendoGrid({
+                            dataSource: {
+                                data: result,
+                                schema: {
+                                    model: {
+                                        fields: {
+                                            ContestId: { type: "number" },
+                                            Name: { type: "string" },
+                                            Reps: { type: "number" },
+                                            Weight: { type: "float" },
+                                            Time: { type: "string" },
+                                            Distance: { type: "float" }
+                                        }
+                                    }
+                                },
+                                pageSize: 5
+                            },
+                            columns: [
+				                {
+				                    field: "Name",
+				                    title: "Exercise/Routine",
+				                    width: 100
+				                },
+				                {
+				                    field: "Reps",
+				                    title: "Repetitions",
+				                    width: 50
+				                },
+				                {
+				                    field: "Weight",
+				                    width: 50
+				                },
+				                {
+				                    field: "Time",
+				                    title: "Time",
+				                    width: 100
+				                },
+				                {
+				                    field: "Distance",
+				                    width: 50
+				                }
+			                ]
+                        });
+                    },
+                    error: function (returnedObject, t2, t3) {
+                        console.log(returnedObject);
+                        console.log(t2);
+                        console.log(t3);
+                    }
+                });
+            }
+            else {
+                $('#workout-view').css('display', 'none');
+            }
+        }
+
+        function detailInit(e) {
+            var detailRow = e.detailRow;
+            console.log(e);
+            detailRow.find(".contest-events").kendoGrid({
+                dataSource: {
+                    transport: {
+                        read: {
+                            url: '@Url.RouteUrl("ContestEvents", new {httproute = "" })/' + e.data.ContestId
+                        },
+                        type: 'json'
+                    },
+                    serverPaging: true,
+                    serverSorting: true,
+                    serverFiltering: true,
+                    pageSize: 6,
+                    filter: { field: "ContestId", operator: "eq", value: e.data.ContestId }
+                },
+                scrollable: false,
+                sortable: true,
+                pageable: true,
+                columns: [
+                            { field: "EventName", title: "Event/Routine", width: 100 },
+                            { field: "EventGoal", title: "Extra Information", width: 250 }
+                        ]
+            });
+        }
+
+
+        //logic for calendar:
+        //add exercise
+        //  - add to array of exercises that always populates the preview div
+        //add workout
+        $('#add-workout-id').css('display', 'none');
+        $('#add-diet-id').css('display', 'none');
+        $('#add-workout').click(function () {
+            $('#add-workout-id').css('display', 'block');
+            $('#add-diet-id').css('display', 'none');
+            $('#workout-view').css('display', 'none');
+        });
+        $('#add-diet').click(function () {
+            $('#add-diet-id').css('display', 'block');
+            $('#add-workout-id').css('display', 'none');
+            $('#workout-view').css('display', 'none');
+        });
+
+        var validatable = $("#add-workout-id").kendoValidator().data("kendoValidator");
+        var dietValidatable = $("#add-diet-id").kendoValidator().data("kendoValidator");
+
+        var viewModel = kendo.observable({
+            events: new kendo.data.DataSource({
+                transport: {
+                    read: {
+                        url: '@Url.RouteUrl("Exercises", new { httproute = "" })',
+                        dataType: "json"
+                    }
+                }
+            }),
+            entryDate: new Date(),
+            exerciseName: null,
+            reps: 0,
+            weight: 0,
+            time: '00:00:00.000',
+            distance: 0,
+            addExercise: function () {
+                if (validatable.validate()) {
+                    this.get("exercises").push({
+                        id: this.get("exerciseName").Id,
+                        name: this.get("exerciseName").Name,
+                        reps: parseInt(this.get("reps")),
+                        weight: parseFloat(this.get("weight")),
+                        time: this.get("time"),
+                        distance: parseFloat(this.get("distance"))
+                    });
+                    this.set("isEnabled", true);
+                }
+            },
+            deleteExercise: function (e) {
+                // the current data item (exercise) is passed as the "data" field of the event argument
+                var exercise = e.data;
+                var exercises = this.get("exercises");
+                var index = exercises.indexOf(exercise);
+                // remove the product by using the splice method
+                exercises.splice(index, 1);
+                if (exercises.length == 0)
+                    this.set("isEnabled", false);
+            },
+            total: function () {
+                return this.get("exercises").length;
+            },
+            save: function () {
+                //send this.exercises to get saved for the day and forget about it
+                //json call here for post
+                var exercisesPost = [];
+                for (var i = 0, max = this.exercises.length; i < max; i++) {
+                    exercisesPost.push({
+                        Id: this.exercises[i].id,
+                        Name: this.exercises[i].name,
+                        Reps: this.exercises[i].reps,
+                        Weight: this.exercises[i].weight,
+                        Time: this.exercises[i].time,
+                        Distance: this.exercises[i].distance
+                    });
+                }
+
+                var post = {
+                    Exercises: exercisesPost,
+                    EntryDate: this.get("entryDate")
+                }
+
+                var self = this;
+                $.ajax('@Url.RouteUrl("SaveExercise", new { httproute = "" })', {
+                    data: JSON.stringify(post),
+                    type: 'post', contentType: 'application/json',
+                    success: function (result) {
+                        self.set("exercises", []);
+                        alert('Saved!');
+                        dateResults.push(+self.get("entryDate"));
+                        $('#calendar').empty();
+                        getWorkoutDates();
+                        $('#add-workout-id').css('display', 'none');
+                        self.set("isEnabled", false);
+                    },
+                    error: function (returnedObject, t2, t3) {
+                        console.log(returnedObject);
+                        console.log(t2);
+                        console.log(t3);
+                    }
+                });
+            },
+            exercises: [],
+            isEnabled: false
+        });
+
+        kendo.bind($("#add-workout-id"), viewModel);
+
+
+        var dietViewModel = kendo.observable({
+            events: new kendo.data.DataSource({
+                transport: {
+                    read: {
+                        url: '@Url.RouteUrl("Exercises", new { httproute = "" })',
+                        dataType: "json"
+                    }
+                }
+            }),
+            entryDate: new Date(),
+            entryTime: null,
+            foodName: null,
+            dietServing: 0,
+            addFood: function () {
+                if (dietValidatable.validate()) {
+                    this.get("foods").push({
+                        id: this.get("foodName").Id,
+                        name: this.get("foodName").Name,
+                        servingSize: parseInt(this.get("reps"))
+                    });
+                    this.set("isEnabled", true);
+                }
+            },
+            deleteFood: function (e) {
+                // the current data item (exercise) is passed as the "data" field of the event argument
+                var food = e.data;
+                var foods = this.get("foods");
+                var index = foods.indexOf(food);
+                // remove the product by using the splice method
+                foods.splice(index, 1);
+                if (foods.length == 0)
+                    this.set("isEnabled", false);
+            },
+            total: function () {
+                return this.get("foods").length;
+            },
+            save: function () {
+                //send this.exercises to get saved for the day and forget about it
+                //json call here for post
+                var foodsPost = [];
+                for (var i = 0, max = this.foods.length; i < max; i++) {
+                    foodsPost.push({
+                        Id: this.foods[i].id,
+                        Name: this.foods[i].name,
+                        ServingSize: this.exercises[i].servingSize
+                    });
+                }
+
+                var post = {
+                    Foods: foodsPost,
+                    EntryDate: this.get("entryDate"),
+                    EntryTime: this.get("entryTime")
+                }
+
+                var self = this;
+                $.ajax('@Url.RouteUrl("SaveExercise", new { httproute = "" })', {
+                    data: JSON.stringify(post),
+                    type: 'post', contentType: 'application/json',
+                    success: function (result) {
+                        self.set("exercises", []);
+                        alert('Saved!');
+                        dateResults.push(+self.get("entryDate"));
+                        $('#calendar').empty();
+                        getWorkoutDates();
+                        $('#add-workout-id').css('display', 'none');
+                        self.set("isEnabled", false);
+                    },
+                    error: function (returnedObject, t2, t3) {
+                        console.log(returnedObject);
+                        console.log(t2);
+                        console.log(t3);
+                    }
+                });
+            },
+            foods: [],
+            isEnabled: false
+        });
+
+        kendo.bind($("#add-diet-id"), dietViewModel);
+
+
+        $("#workout-preview-table").kendoGrid();
+    });
+</script>
+</html>

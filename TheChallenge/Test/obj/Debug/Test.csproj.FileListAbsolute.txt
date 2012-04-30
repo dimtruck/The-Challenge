@@ -1,0 +1,6 @@
+C:\Users\Dimitry\The-Challenge\TheChallenge\Test\bin\Debug\Test.dll
+C:\Users\Dimitry\The-Challenge\TheChallenge\Test\bin\Debug\Test.pdb
+C:\Users\Dimitry\The-Challenge\TheChallenge\Test\bin\Debug\NSpec.dll
+C:\Users\Dimitry\The-Challenge\TheChallenge\Test\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\Dimitry\The-Challenge\TheChallenge\Test\obj\Debug\Test.dll
+C:\Users\Dimitry\The-Challenge\TheChallenge\Test\obj\Debug\Test.pdb

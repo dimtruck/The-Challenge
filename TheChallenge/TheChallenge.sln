@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Web Developer Express 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheChallenge", "TheChallenge\TheChallenge.csproj", "{5757223C-A5CA-4D7D-BFF5-825ADD030515}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{4155AF7B-4220-485D-8BCF-DE45BA7EC091}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{93BF857F-88D7-4254-BD83-09BD262E7539}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5757223C-A5CA-4D7D-BFF5-825ADD030515}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5757223C-A5CA-4D7D-BFF5-825ADD030515}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5757223C-A5CA-4D7D-BFF5-825ADD030515}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5757223C-A5CA-4D7D-BFF5-825ADD030515}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4155AF7B-4220-485D-8BCF-DE45BA7EC091}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4155AF7B-4220-485D-8BCF-DE45BA7EC091}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4155AF7B-4220-485D-8BCF-DE45BA7EC091}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4155AF7B-4220-485D-8BCF-DE45BA7EC091}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93BF857F-88D7-4254-BD83-09BD262E7539}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93BF857F-88D7-4254-BD83-09BD262E7539}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93BF857F-88D7-4254-BD83-09BD262E7539}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93BF857F-88D7-4254-BD83-09BD262E7539}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
