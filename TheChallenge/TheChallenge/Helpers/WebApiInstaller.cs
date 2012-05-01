@@ -7,6 +7,7 @@ using System.Web.Http.Dispatcher;
 using System.Web.Http;
 using Domain;
 using Domain.Repository;
+using System.Web.WebPages;
 
 namespace TheChallenge.Helpers
 {
@@ -65,8 +66,12 @@ namespace TheChallenge.Helpers
                 Component.For<System.Web.Http.Metadata.ModelMetadataProvider>().
                     ImplementedBy<System.Web.Http.Metadata.Providers.CachedDataAnnotationsModelMetadataProvider>().
                     LifestyleTransient(),
+                Component.For<System.Web.WebPages.IDisplayMode>().
+                    ImplementedBy<System.Web.WebPages.DefaultDisplayMode>().
+                    LifestyleTransient(),
                 Component.For<HttpConfiguration>().
                 Instance(GlobalConfiguration.Configuration));
+
         }
     }
 }

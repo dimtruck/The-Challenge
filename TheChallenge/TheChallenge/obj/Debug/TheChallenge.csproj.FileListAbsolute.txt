@@ -44,3 +44,6 @@ C:\Users\Dimitry\The-Challenge\TheChallenge\TheChallenge\bin\Domain.pdb
 C:\Users\Dimitry\The-Challenge\TheChallenge\TheChallenge\bin\Dapper.pdb
 C:\Users\Dimitry\The-Challenge\TheChallenge\TheChallenge\bin\AutoMapper.dll
 C:\Users\Dimitry\The-Challenge\TheChallenge\TheChallenge\bin\AutoMapper.xml
+C:\Users\Dimitry\The-Challenge\TheChallenge\TheChallenge\bin\Glimpse.Core.dll
+C:\Users\Dimitry\The-Challenge\TheChallenge\TheChallenge\bin\Glimpse.Mvc3.dll
+C:\Users\Dimitry\The-Challenge\TheChallenge\TheChallenge\bin\WebActivator.dll

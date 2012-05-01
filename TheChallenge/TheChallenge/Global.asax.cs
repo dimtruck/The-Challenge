@@ -15,6 +15,7 @@ using System.Web.Http.Controllers;
 using Castle.Windsor.Configuration.Interpreters;
 using Domain.Entities;
 using TheChallenge.Models;
+using System.Web.WebPages;
 
 namespace TheChallenge
 {
@@ -119,6 +120,10 @@ namespace TheChallenge
             BundleTable.Bundles.EnableDefaultBundles();
 
             RegisterMappers();
+
+            DisplayModeProvider.Instance.Modes.Insert(0, new MobileDisplayMode());
+
+
 
         }
 

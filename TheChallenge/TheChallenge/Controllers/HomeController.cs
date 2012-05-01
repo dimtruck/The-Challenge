@@ -10,6 +10,8 @@ namespace TheChallenge.Controllers
     {
         public ActionResult Index()
         {
+            ViewBag.isMobileOn = this.Request.Browser.IsMobileDevice;
+            ViewBag.settings = this.Request.Browser;
             return View();
         }
     }
