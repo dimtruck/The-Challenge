@@ -380,13 +380,11 @@
 
                 //find out where you're coming from
                 if (location.href.indexOf('#') < 0) {
-                    console.log(location.href);
                     //profile page
                     self.loadCurrentStats();
                     self.loadGoals();
                 } else {
                     var pageId = location.href.split('#')[1];
-                    console.log(location.href);
                     switch (pageId) {
                         case "profile":
                             self.loadCurrentStats();
