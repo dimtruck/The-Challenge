@@ -1,0 +1,413 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>This is a mobile site</title>
+    <link href="@System.Web.Optimization.BundleTable.Bundles.ResolveBundleUrl("~/Content/mobile/css")" rel="stylesheet" type="text/css" />
+    <style type="text/css">
+        .ui-listview-inset li
+        {
+            padding:5px;
+            border-bottom: 1px solid #000;
+        }
+        
+        .ui-listview-inset li:last-child
+        {
+            border-bottom-width: 0;
+        }
+        
+        #newWorkout label
+        {
+            float: left;
+            width: 120px;
+        }
+        #newWorkout input
+        {
+             width:3em;
+        }
+    </style>
+</head>
+<body>
+    <div data-role="page" id="profile">
+        <div data-role="header">
+		    <h1>Profile</h1>
+	    </div>
+    	<div data-role="content" >	
+		    <h2>Dimitry Ushakov</h2>
+            <div data-role="collapsible">
+                <h3>Current Statistics</h3>
+                <ul id="listOfStats" data-role="listview" data-inset="true" data-bind="foreach: TheChallenge.currentStats">
+                    <li>
+                        <h3 data-bind="text: event"></h3>
+                        <p><label>Date Lifted: </label><span data-bind="text: dateLifted"></span></p>
+                        <p><label>Result: </label><span data-bind="text: result"></span></p>
+                    </li>
+                </ul>
+            </div>
+            <div data-role="collapsible">
+                <h3>Goals</h3>
+                <ul id="listOfGoals" data-role="listview" data-inset="true" data-bind="foreach: TheChallenge.goals">
+                    <li>
+                        <h3 data-bind="text: event"></h3>
+                        <p><label>Contest Name: </label><span data-bind="text: contest"></span></p>
+                        <p><label>Contest Date: </label><span data-bind="text: contestDate"></span></p>
+                        <p><label>Result: </label><span data-bind="text: result"></span></p>
+                    </li>
+                </ul>
+            </div>
+	    </div>
+	    <div data-role="footer" data-theme="d" style="text-align:center;">
+            <div data-role="controlgroup" data-type="horizontal">
+                <a href="#profile" data-role="button" data-theme="b" data-bind="click: TheChallenge.loadProfile">Profile</a>
+                <a href="#contests" data-role="button" data-bind="click: TheChallenge.loadContests">Contests</a>
+                <a href="#calendar" data-role="button" data-bind="click: TheChallenge.loadCalendar">Calendar</a>
+                <a href="#blog" data-role="button">Blog</a>
+                <a href="#reports" data-role="button">Reports</a>
+            </div>
+	    </div>
+    </div>
+    <div data-role="page" id="contests">
+        <div data-role="header">
+		    <h1>Contests</h1>
+	    </div>
+    	<div data-role="content" >	
+		    <h2>Dimitry Ushakov</h2>
+            <ul id="listOfContests" data-role="listview" data-inset="true" data-bind="foreach: TheChallenge.contests">
+                <li>
+                    <h3 data-bind="text: contest"></h3>
+                    <p><label>Contest Date: </label><span data-bind="text: contestDate"></span></p>
+                    <p><label>Place: </label><span data-bind="text: place"></span></p>
+                    <p><label>Details: </label><span data-bind="text: details"></span></p>
+                </li>
+            </ul>
+	    </div>
+	    <div data-role="footer" data-theme="d" style="text-align:center;">
+            <div data-role="controlgroup" data-type="horizontal">
+                <a href="#profile" data-role="button" data-bind="click: TheChallenge.loadProfile">Profile</a>
+                <a href="#contests" data-role="button" data-theme="b" data-bind="click: TheChallenge.loadContests">Contests</a>
+                <a href="#calendar" data-role="button" data-bind="click: TheChallenge.loadCalendar">Calendar</a>
+                <a href="#blog" data-role="button">Blog</a>
+                <a href="#reports" data-role="button">Reports</a>
+            </div>
+	    </div>
+    </div>
+    <div data-role="page" id="calendar">
+        <div data-role="header">
+		    <h1>Calendar</h1>
+	    </div>
+    	<div data-role="content" >	
+		    <h2>Dimitry Ushakov</h2>
+            <ul id="listOfWorkouts" data-role="listview" data-inset="true" data-bind="foreach: TheChallenge.enteredWorkouts">
+                <li data-bind="text: workoutDate, click: TheChallenge.loadWorkoutDate"></li>
+            </ul>
+		
+		    <p>List of entered workouts in a list for current month.</p>	
+            <p>Ability to go back and forth on month</p>
+            <p>Ability to add new workout</p>
+            <ul id="workoutDate" data-role="listview" data-inset="true" data-bind="foreach: TheChallenge.selectedWorkout">
+                <li>
+                    <h3 data-bind="text: event"></h3>
+                    <p><label>Reps: </label><span data-bind="text: reps"></span></p>
+                    <p><label>Weight: </label><span data-bind="text: weight"></span></p>
+                    <p><label>Time: </label><span data-bind="text: time"></span></p>
+                    <p><label>Distance: </label><span data-bind="text: distance"></span></p>
+                </li>
+            </ul>
+
+            <a href="#newWorkout" data-role="button" data-rel="dialog">Add Workout</a>
+	    </div>
+	    <div data-role="footer" data-theme="d" style="text-align:center;">
+            <div data-role="controlgroup" data-type="horizontal">
+                <a href="#profile" data-role="button" data-bind="click: TheChallenge.loadProfile">Profile</a>
+                <a href="#contests" data-role="button" data-bind="click: TheChallenge.loadContests">Contests</a>
+                <a href="#calendar" data-role="button" data-bind="click: TheChallenge.loadCalendar" data-theme="b">Calendar</a>
+                <a href="#blog" data-role="button">Blog</a>
+                <a href="#reports" data-role="button">Reports</a>
+            </div>
+	    </div>
+    </div>
+    <div data-role="page" id="blog">
+        <div data-role="header">
+		    <h1>Blog</h1>
+	    </div>
+    	<div data-role="content" >	
+		    <h2>Dimitry Ushakov</h2>
+		
+		    <p>Ability to view blog entries.</p>	
+	    </div>
+	    <div data-role="footer" data-theme="d" style="text-align:center;">
+            <div data-role="controlgroup" data-type="horizontal">
+                <a href="#profile" data-role="button" data-bind="click: TheChallenge.loadProfile">Profile</a>
+                <a href="#contests" data-role="button" data-bind="click: TheChallenge.loadContests">Contests</a>
+                <a href="#calendar" data-role="button">Calendar</a>
+                <a href="#blog" data-role="button" data-theme="b">Blog</a>
+                <a href="#reports" data-role="button">Reports</a>
+            </div>
+	    </div>
+    </div>
+    <div data-role="page" id="reports">
+        <div data-role="header">
+		    <h1>Reports</h1>
+	    </div>
+    	<div data-role="content" >	
+		    <h2>Dimitry Ushakov</h2>
+		
+		    <p>Ability to view reporting graphs.</p>	
+	    </div>
+	    <div data-role="footer" data-theme="d" style="text-align:center;">
+            <div data-role="controlgroup" data-type="horizontal">
+                <a href="#profile" data-role="button">Profile</a>
+                <a href="#contests" data-role="button" data-bind="click: TheChallenge.loadContests">Contests</a>
+                <a href="#calendar" data-role="button">Calendar</a>
+                <a href="#blog" data-role="button">Blog</a>
+                <a href="#reports" data-role="button" data-theme="b">Reports</a>
+            </div>
+	    </div>
+    </div>
+    <div id="newWorkout" data-role="page">
+        <div data-role="header">
+			<h1>New Workout</h1>
+		</div>
+    	<div data-role="content" >	
+		    <h2>Dimitry Ushakov</h2>
+            <div data-role="fieldcontain">
+				<label for="event" class="select">Exercise:</label>
+				<select name="event" id="add-workout-event" data-bind="options: TheChallenge.addWorkoutEvents, optionsText: 'value', optionsValue: 'id', value: TheChallenge.exerciseToAdd"></select>
+            </div>
+            <div data-role="fieldcontain">
+				<label for="date">Workout Date:</label>
+			 	<input type="number" name="date" id="add-workout-month" value="1" min="1" max="12" data-highlight="true"   data-bind="value: TheChallenge.monthToAdd"/>-
+			 	<input type="number" name="date" id="add-workout-date" value="1" min="1" max="31" data-highlight="true"  data-bind="value: TheChallenge.dateToAdd"/>-
+			 	<input type="number" name="date" id="add-workout-year" value="2012" min="2012" max="2020" data-highlight="true" style="width:4em;"  data-bind="value: TheChallenge.yearToAdd" />
+			</div>
+            <div data-role="fieldcontain">
+				<label for="add-workout-reps">Reps:</label>
+				<input type="number" id="add-workout-reps" min="0" data-bind="value: TheChallenge.repsToAdd" />
+			</div>
+            <div data-role="fieldcontain">
+				<label for="add-workout-weight">Weight:</label>
+				<input type="text" id="add-workout-weight" data-bind="value: TheChallenge.weightToAdd" />
+			</div>
+            <div data-role="fieldcontain">
+				<label for="add-workout-time">Time:</label>
+				<input type="text" pattern="\d{2}:\d{2}:\d{2}.\d{3}" id="add-workout-time"  style="width:8em;"  data-bind="value: TheChallenge.timeToAdd" />
+			</div>
+            <div data-role="fieldcontain">
+				<label for="add-workout-distance">Distance:</label>
+				<input type="text" id="add-workout-distance" data-bind="value: TheChallenge.distanceToAdd" />
+			</div>
+            <a data-role="button" data-bind="click: TheChallenge.addExerciseToPreview">Add Exercise</a>
+            <ul id="add-exercises" data-role="listview" data-bind="foreach: TheChallenge.addedExercises" data-split-icon="delete" data-split-theme="d" data-inset="true" style="margin:5px;">
+                <li>
+                    <a>
+                        <h3 data-bind="text: Name"></h3>
+                        <p><label>Reps: </label><span data-bind="text: Reps"></span></p>
+                        <p><label>Weight: </label><span data-bind="text: Weight"></span></p>
+                        <p><label>Time: </label><span data-bind="text: Time"></span></p>
+                        <p><label>Distance: </label><span data-bind="text: Distance"></span></p>
+                    </a>
+                    <a data-bind="click: TheChallenge.deleteExercise">Delete</a>
+                </li>
+            </ul>
+            <a data-role="button" data-bind="click: TheChallenge.saveWorkout, visible: TheChallenge.showSaveWorkout" style="clear:both;">Save</a>
+	    </div>
+    </div> 
+    <script type="text/javascript" src="@System.Web.Optimization.BundleTable.Bundles.ResolveBundleUrl("~/Scripts/mobile/js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Scripts/knockout-2.0.0.js")"></script>
+    <script type="text/javascript">
+        var TheChallenge = {
+            Profile: function () {
+                var self = this;
+                self.currentStats = ko.observableArray([]);
+                self.goals = ko.observableArray([]);
+                self.contests = ko.observableArray([]);
+                self.enteredWorkouts = ko.observableArray([]);
+                self.selectedWorkout = ko.observableArray([]);
+                self.addWorkoutEvents = ko.observableArray([]);
+                self.addedExercises = ko.observableArray([]);
+                self.exerciseToAdd = ko.observable('');
+                self.dateToAdd = ko.observable((new Date()).getDate());
+                self.monthToAdd = ko.observable((new Date()).getMonth() + 1);
+                self.yearToAdd = ko.observable((new Date()).getFullYear());
+                self.repsToAdd = ko.observable(0);
+                self.weightToAdd = ko.observable(0);
+                self.timeToAdd = ko.observable('00:00:00.000');
+                self.distanceToAdd = ko.observable(0);
+                self.showSaveWorkout = ko.observable(false);
+
+                self.deleteExercise = function (exercise) {
+                    self.addedExercises.remove(exercise);
+                    if (self.addedExercises().length === 0)
+                        self.showSaveWorkout(false);
+                };
+
+                self.addExerciseToPreview = function () {
+                    //add exercise to addedExercises and then clear those numbers
+                    var exerciseToAddValue = ko.utils.arrayFirst(self.addWorkoutEvents(), function (item) {
+                        return item.id === self.exerciseToAdd();
+                    });
+                    self.addedExercises.push({
+                        Id: exerciseToAddValue.id,
+                        Name: exerciseToAddValue.value,
+                        date: self.monthToAdd() + '-' + self.dateToAdd() + '-' + self.yearToAdd(),
+                        Reps: self.repsToAdd(),
+                        Weight: self.weightToAdd(),
+                        Time: self.timeToAdd(),
+                        Distance: self.distanceToAdd()
+                    });
+                    self.showSaveWorkout(true);
+                    $('#add-exercises').listview("refresh");
+                };
+
+                self.saveWorkout = function () {
+                    //go through and save exercises
+                };
+
+                self.loadExercises = function () {
+                    $.getJSON('@Url.RouteUrl("Exercises", new { httproute = "" })',
+                        function (result) {
+                            self.addWorkoutEvents([]);
+                            for (var i = 0, max = result.length; i < max; i++) {
+                                self.addWorkoutEvents.push({
+                                    id: result[i].Id,
+                                    value: result[i].Name
+                                });
+                            }
+                        }
+                    );
+                };
+
+                self.loadWorkoutDate = function (workout) {
+                    var workoutDate = workout.workoutDate;
+                    var parsedDate = (workoutDate.getMonth() + 1) + '-' + workoutDate.getDate() + '-' + workoutDate.getFullYear();
+                    $.getJSON('@Url.RouteUrl("WorkoutDates", new { httproute = "" })/' + parsedDate,
+                        function (result) {
+                            self.selectedWorkout([]);
+                            for (var i = 0, max = result.length; i < max; i++) {
+                                self.selectedWorkout.push({
+                                    event: result[i].Name,
+                                    reps: result[i].Reps,
+                                    weight: result[i].Weight,
+                                    time: result[i].Time,
+                                    distance: result[i].Distance
+                                });
+                            }
+                        }
+                    );
+                };
+
+                self.loadCurrentStats = function () {
+                    $.getJSON('@Url.RouteUrl("CurrentLifts", new { httproute = "" })',
+                        function (result) {
+                            self.currentStats([]);
+                            for (var i = 0, max = result.length; i < max; i++) {
+                                self.currentStats.push({
+                                    event: result[i].Event,
+                                    dateLifted: new Date(parseInt(result[i].DateLifted.substr(6))),
+                                    result: result[i].Result,
+                                    eventType: result[i].EventType
+                                });
+                            }
+                        }
+                    );
+                };
+
+                self.loadGoals = function () {
+                    $.getJSON('@Url.RouteUrl("Goals", new { httproute = "" })',
+                        function (result) {
+                            self.goals([]);
+                            for (var i = 0, max = result.length; i < max; i++) {
+                                self.goals.push({
+                                    event: result[i].Event.Name,
+                                    contest: result[i].Contest.Name,
+                                    contestDate: new Date(parseInt(result[i].Contest.ContestDate.substr(6))),
+                                    result: result[i].Result
+                                });
+                            }
+                        }
+                    );
+                };
+
+                self.loadProfile = function () {
+                    self.loadCurrentStats();
+                    self.loadGoals();
+                    if ($.mobile) {
+                        $.mobile.changePage('#profile');
+                    }
+                };
+
+                self.loadContests = function () {
+                    $.getJSON('@Url.RouteUrl("Contests", new { httproute = "" })',
+                        function (result) {
+                            self.contests([]);
+                            for (var i = 0, max = result.length; i < max; i++) {
+                                self.contests.push({
+                                    contest: result[i].Name,
+                                    contestDate: new Date(parseInt(result[i].ContestDate.substr(6))),
+                                    place: result[i].Place,
+                                    details: result[i].Details
+                                });
+                            }
+                            if ($.mobile) {
+                                $.mobile.changePage('#contests');
+                            }
+                        }
+                    );
+                };
+
+                self.loadCalendar = function () {
+                    $.getJSON('@Url.RouteUrl("WorkoutDates", new { httproute = "" })',
+                        function (result) {
+                            self.enteredWorkouts([]);
+                            for (var i = 0, max = result.length; i < max; i++) {
+                                self.enteredWorkouts.push({
+                                    workoutDate: new Date(parseInt(result[i].substr(6)))
+                                });
+                            }
+                            self.loadExercises();
+                            if ($.mobile) {
+                                $.mobile.changePage('#calendar');
+                            }
+                        }
+                    );
+                };
+
+
+                //find out where you're coming from
+                if (location.href.indexOf('#') < 0) {
+                    console.log(location.href);
+                    //profile page
+                    self.loadCurrentStats();
+                    self.loadGoals();
+                } else {
+                    var pageId = location.href.split('#')[1];
+                    console.log(location.href);
+                    switch (pageId) {
+                        case "profile":
+                            self.loadCurrentStats();
+                            self.loadGoals();
+                            break;
+                        case "contests":
+                            self.loadContests();
+                            break;
+                        case "calendar":
+                            self.loadCalendar();
+                            break;
+                        case "calendar&ui-state=dialog":
+                            self.loadCalendar();
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+        };
+        ko.applyBindings(TheChallenge.Profile());
+    </script>
+</body>
+</html>
