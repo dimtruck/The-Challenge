@@ -266,6 +266,32 @@
 
                 self.saveWorkout = function () {
                     //go through and save exercises
+                    var post = {
+                        Exercises: self.addedExercises(),
+                        EntryDate: self.addedExercises()[0].date
+                    };
+                    $.ajax('@Url.RouteUrl("SaveExercise", new { httproute = "" })', {
+                        data: JSON.stringify(post),
+                        type: 'post', contentType: 'application/json',
+                        success: function (result) {
+                            self.addedExercises([]);
+                            var existingWorkoutDate = ko.utils.arrayFirst(self.enteredWorkouts(), function (item) {
+                                return +item.workoutDate === +(new Date(post.EntryDate));
+                            });
+                            if (existingWorkoutDate == null) {
+                                self.enteredWorkouts.push({
+                                    workoutDate: new Date(post.EntryDate)
+                                });
+                            }
+                            self.showSaveWorkout(false);
+                            $('.ui-dialog').dialog('close');
+                        },
+                        error: function (returnedObject, t2, t3) {
+                            console.log(returnedObject);
+                            console.log(t2);
+                            console.log(t3);
+                        }
+                    });
                 };
 
                 self.loadExercises = function () {

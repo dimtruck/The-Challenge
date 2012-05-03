@@ -205,12 +205,11 @@
             <ul id="add-exercises" data-role="listview" data-bind="foreach: TheChallenge.addedExercises" data-split-icon="delete" data-split-theme="d" data-inset="true" style="margin:5px;">
                 <li>
                     <a>
-                        <h3 data-bind="text: exercise"></h3>
-                        <p data-bind="text: date"></p>
-                        <p><label>Reps: </label><span data-bind="text: reps"></span></p>
-                        <p><label>Weight: </label><span data-bind="text: weight"></span></p>
-                        <p><label>Time: </label><span data-bind="text: time"></span></p>
-                        <p><label>Distance: </label><span data-bind="text: distance"></span></p>
+                        <h3 data-bind="text: Name"></h3>
+                        <p><label>Reps: </label><span data-bind="text: Reps"></span></p>
+                        <p><label>Weight: </label><span data-bind="text: Weight"></span></p>
+                        <p><label>Time: </label><span data-bind="text: Time"></span></p>
+                        <p><label>Distance: </label><span data-bind="text: Distance"></span></p>
                     </a>
                     <a data-bind="click: TheChallenge.deleteExercise">Delete</a>
                 </li>
@@ -243,7 +242,7 @@
 
                 self.deleteExercise = function (exercise) {
                     self.addedExercises.remove(exercise);
-                    if(self.addedExercises().length === 0)
+                    if (self.addedExercises().length === 0)
                         self.showSaveWorkout(false);
                 };
 
@@ -253,13 +252,13 @@
                         return item.id === self.exerciseToAdd();
                     });
                     self.addedExercises.push({
-                        exerciseId: exerciseToAddValue.id,
-                        exercise: exerciseToAddValue.value,
+                        Id: exerciseToAddValue.id,
+                        Name: exerciseToAddValue.value,
                         date: self.monthToAdd() + '-' + self.dateToAdd() + '-' + self.yearToAdd(),
-                        reps: self.repsToAdd(),
-                        weight: self.weightToAdd(),
-                        time: self.timeToAdd(),
-                        distance: self.distanceToAdd()
+                        Reps: self.repsToAdd(),
+                        Weight: self.weightToAdd(),
+                        Time: self.timeToAdd(),
+                        Distance: self.distanceToAdd()
                     });
                     self.showSaveWorkout(true);
                     $('#add-exercises').listview("refresh");
@@ -267,6 +266,32 @@
 
                 self.saveWorkout = function () {
                     //go through and save exercises
+                    var post = {
+                        Exercises: self.addedExercises(),
+                        EntryDate: self.addedExercises()[0].date
+                    };
+                    $.ajax('@Url.RouteUrl("SaveExercise", new { httproute = "" })', {
+                        data: JSON.stringify(post),
+                        type: 'post', contentType: 'application/json',
+                        success: function (result) {
+                            self.addedExercises([]);
+                            var existingWorkoutDate = ko.utils.arrayFirst(self.enteredWorkouts(), function (item) {
+                                return +item.workoutDate === +(new Date(post.EntryDate));
+                            });
+                            if (existingWorkoutDate == null) {
+                                self.enteredWorkouts.push({
+                                    workoutDate: new Date(post.EntryDate)
+                                });
+                            }
+                            self.showSaveWorkout(false);
+                            $('.ui-dialog').dialog('close');
+                        },
+                        error: function (returnedObject, t2, t3) {
+                            console.log(returnedObject);
+                            console.log(t2);
+                            console.log(t3);
+                        }
+                    });
                 };
 
                 self.loadExercises = function () {
@@ -395,6 +420,9 @@
                             self.loadContests();
                             break;
                         case "calendar":
+                            self.loadCalendar();
+                            break;
+                        case "calendar&ui-state=dialog":
                             self.loadCalendar();
                             break;
                         default:
