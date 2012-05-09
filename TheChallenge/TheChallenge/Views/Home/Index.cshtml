@@ -339,14 +339,16 @@
 
         });
 
+
         var tcAuthorizationToken = null;
+        var dateResults = [];
 
         function InitiateUserData() {
             var currentLiftsSource = new kendo.data.DataSource({
                 transport: {
                     read: {
                         beforeSend: function (XMLHttpRequest) {
-                            XMLHttpRequest.setRequestHeader("TC-Authorization", tcAuthorizationToken != null? tcAuthorizationToken: localStorage.getItem('TC-Authorization'));
+                            XMLHttpRequest.setRequestHeader("TC-Authorization", tcAuthorizationToken != null ? tcAuthorizationToken : localStorage.getItem('TC-Authorization'));
                         },
                         url: '@Url.RouteUrl("CurrentLifts", new { httproute = "" })'
                     },
@@ -473,12 +475,14 @@
 			        ]
 
             });
-        }
-        /**
-        THIS IS FOR CALENDAR
-        */
+            /**
+            THIS IS FOR CALENDAR
+            */
 
-        var dateResults = [];
+            getWorkoutDates();
+
+
+        }
 
         function getWorkoutDates() {
             $.ajax('@Url.RouteUrl("WorkoutDates", new { httproute = "" })', {
@@ -494,9 +498,9 @@
                         month: {
                             // template for dates in month view
                             content: '# if ($.inArray(+data.date, [' + dateResults + ']) != -1) { #' +
-                            '<div class="workoutDate">#=data.value#</div>' +
-                            '# } #' +
-                            '#= data.value #'
+                    '<div class="workoutDate">#=data.value#</div>' +
+                    '# } #' +
+                    '#= data.value #'
                         },
                         change: onChange
                     });
@@ -511,8 +515,6 @@
                 }
             });
         }
-
-        getWorkoutDates();
 
 
         function onChange() {
@@ -545,30 +547,30 @@
                                 pageSize: 5
                             },
                             columns: [
-				                {
-				                    field: "Name",
-				                    title: "Exercise/Routine",
-				                    width: 100
-				                },
-				                {
-				                    field: "Reps",
-				                    title: "Repetitions",
-				                    width: 50
-				                },
-				                {
-				                    field: "Weight",
-				                    width: 50
-				                },
-				                {
-				                    field: "Time",
-				                    title: "Time",
-				                    width: 100
-				                },
-				                {
-				                    field: "Distance",
-				                    width: 50
-				                }
-			                ]
+				        {
+				            field: "Name",
+				            title: "Exercise/Routine",
+				            width: 100
+				        },
+				        {
+				            field: "Reps",
+				            title: "Repetitions",
+				            width: 50
+				        },
+				        {
+				            field: "Weight",
+				            width: 50
+				        },
+				        {
+				            field: "Time",
+				            title: "Time",
+				            width: 100
+				        },
+				        {
+				            field: "Distance",
+				            width: 50
+				        }
+			        ]
                         });
                     },
                     error: function (returnedObject, t2, t3) {
@@ -606,12 +608,11 @@
                 sortable: true,
                 pageable: true,
                 columns: [
-                            { field: "EventName", title: "Event/Routine", width: 100 },
-                            { field: "EventGoal", title: "Extra Information", width: 250 }
-                        ]
+                    { field: "EventName", title: "Event/Routine", width: 100 },
+                    { field: "EventGoal", title: "Extra Information", width: 250 }
+                ]
             });
         }
-
 
         //logic for calendar:
         //add exercise
@@ -840,7 +841,6 @@
                             var registerWindow = $("#register-window").data('kendoWindow');
                             registerWindow.close();
                             InitiateUserData();
-                            getWorkoutDates();
                         },
                         error: function (returnedObject, t2, t3) {
                             console.log(returnedObject);
@@ -865,10 +865,10 @@
                     type: 'post', contentType: 'application/json',
                     success: function (result, status, xmlResponse) {
                         tcAuthorizationToken = xmlResponse.getResponseHeader('TC-Authorization');
+                        localStorage.setItem('TC-Authorization', xmlResponse.getResponseHeader('TC-Authorization'));
                         var window = $("#sign-in-window").data('kendoWindow');
                         window.close();
                         InitiateUserData();
-                        getWorkoutDates();
                     },
                     error: function (returnedObject, t2, t3) {
                         console.log(returnedObject);
@@ -918,6 +918,14 @@
             width: "500px"
         });
 
+
+        if (localStorage.getItem('TC-Authorization') == 'undefined' || localStorage.getItem('TC-Authorization') == null) {
+            var window = $("#sign-in-window").data('kendoWindow');
+            window.center();
+            window.open();
+        } else {
+            InitiateUserData();
+        }
     });
 </script>
 </html>

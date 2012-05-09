@@ -191,7 +191,7 @@
 			</div>
             <div data-role="fieldcontain">
 				<label for="add-workout-weight">Weight:</label>
-				<input type="text" id="add-workout-weight" data-bind="value: TheChallenge.weightToAdd" />
+				<input type="number" id="add-workout-weight" data-bind="value: TheChallenge.weightToAdd" />
 			</div>
             <div data-role="fieldcontain">
 				<label for="add-workout-time">Time:</label>
@@ -199,7 +199,7 @@
 			</div>
             <div data-role="fieldcontain">
 				<label for="add-workout-distance">Distance:</label>
-				<input type="text" id="add-workout-distance" data-bind="value: TheChallenge.distanceToAdd" />
+				<input type="number" id="add-workout-distance" data-bind="value: TheChallenge.distanceToAdd" />
 			</div>
             <a data-role="button" data-bind="click: TheChallenge.addExerciseToPreview">Add Exercise</a>
             <ul id="add-exercises" data-role="listview" data-bind="foreach: TheChallenge.addedExercises" data-split-icon="delete" data-split-theme="d" data-inset="true" style="margin:5px;">
@@ -217,12 +217,30 @@
             <a data-role="button" data-bind="click: TheChallenge.saveWorkout, visible: TheChallenge.showSaveWorkout" style="clear:both;">Save</a>
 	    </div>
     </div> 
+    <div id="sign-in-dialog" data-role="dialog">
+        <div data-role="header">
+			<h1>Sign In</h1>
+		</div>
+    	<div data-role="content" >	
+            <div data-role="fieldcontain">
+				<label for="signInName">Name:</label>
+			 	<input type="text" name="signInName" id="signInName" data-bind="value: TheChallenge.signInName"/>
+			</div>
+            <div data-role="fieldcontain">
+				<label for="signInPassword">Password:</label>
+			 	<input type="password" name="signInPassword" id="signInPassword" data-bind="value: TheChallenge.signInPassword"/>
+			</div>
+            <a data-role="button" data-bind="click: TheChallenge.signIn" style="clear:both;">Sign In</a>
+	    </div>
+    </div> 
     <script type="text/javascript" src="@System.Web.Optimization.BundleTable.Bundles.ResolveBundleUrl("~/Scripts/mobile/js")"></script>
     <script type="text/javascript" src="@Url.Content("~/Scripts/knockout-2.0.0.js")"></script>
     <script type="text/javascript">
         var TheChallenge = {
             Profile: function () {
                 var self = this;
+                self.signInName = ko.observable('');
+                self.signInPassword = ko.observable('');
                 self.currentStats = ko.observableArray([]);
                 self.goals = ko.observableArray([]);
                 self.contests = ko.observableArray([]);
@@ -239,6 +257,28 @@
                 self.timeToAdd = ko.observable('00:00:00.000');
                 self.distanceToAdd = ko.observable(0);
                 self.showSaveWorkout = ko.observable(false);
+
+                self.signIn = function () {
+                    //go through and save exercises
+                    var post = {
+                        UserName: self.signInName(),
+                        Password: self.signInPassword()
+                    };
+                    $.ajax('@Url.RouteUrl("SignIn", new { httproute = "" })', {
+                        data: JSON.stringify(post),
+                        type: 'post', contentType: 'application/json',
+                        success: function (result, status, xmlResponse) {
+                            localStorage.setItem('TC-Authorization', xmlResponse.getResponseHeader('TC-Authorization'));
+                            self.loadProfile();
+                            $('.ui-dialog').dialog('close');
+                        },
+                        error: function (returnedObject, t2, t3) {
+                            console.log(returnedObject);
+                            console.log(t2);
+                            console.log(t3);
+                        }
+                    });
+                };
 
                 self.deleteExercise = function (exercise) {
                     self.addedExercises.remove(exercise);
@@ -273,6 +313,9 @@
                     $.ajax('@Url.RouteUrl("SaveExercise", new { httproute = "" })', {
                         data: JSON.stringify(post),
                         type: 'post', contentType: 'application/json',
+                        beforeSend: function (XMLHttpRequest) {
+                            XMLHttpRequest.setRequestHeader("TC-Authorization", localStorage.getItem('TC-Authorization'));
+                        },
                         success: function (result) {
                             self.addedExercises([]);
                             var existingWorkoutDate = ko.utils.arrayFirst(self.enteredWorkouts(), function (item) {
@@ -295,8 +338,12 @@
                 };
 
                 self.loadExercises = function () {
-                    $.getJSON('@Url.RouteUrl("Exercises", new { httproute = "" })',
-                        function (result) {
+                    $.ajax('@Url.RouteUrl("Exercises", new { httproute = "" })', {
+                        type: 'get', contentType: 'application/json',
+                        beforeSend: function (XMLHttpRequest) {
+                            XMLHttpRequest.setRequestHeader("TC-Authorization", localStorage.getItem('TC-Authorization'));
+                        },
+                        success: function (result) {
                             self.addWorkoutEvents([]);
                             for (var i = 0, max = result.length; i < max; i++) {
                                 self.addWorkoutEvents.push({
@@ -305,14 +352,18 @@
                                 });
                             }
                         }
-                    );
+                    });
                 };
 
                 self.loadWorkoutDate = function (workout) {
                     var workoutDate = workout.workoutDate;
                     var parsedDate = (workoutDate.getMonth() + 1) + '-' + workoutDate.getDate() + '-' + workoutDate.getFullYear();
-                    $.getJSON('@Url.RouteUrl("WorkoutDates", new { httproute = "" })/' + parsedDate,
-                        function (result) {
+                    $.ajax('@Url.RouteUrl("WorkoutDates", new { httproute = "" })/' + parsedDate, {
+                        type: 'get', contentType: 'application/json',
+                        beforeSend: function (XMLHttpRequest) {
+                            XMLHttpRequest.setRequestHeader("TC-Authorization", localStorage.getItem('TC-Authorization'));
+                        },
+                        success: function (result) {
                             self.selectedWorkout([]);
                             for (var i = 0, max = result.length; i < max; i++) {
                                 self.selectedWorkout.push({
@@ -324,12 +375,16 @@
                                 });
                             }
                         }
-                    );
+                    });
                 };
 
                 self.loadCurrentStats = function () {
-                    $.getJSON('@Url.RouteUrl("CurrentLifts", new { httproute = "" })',
-                        function (result) {
+                    $.ajax('@Url.RouteUrl("CurrentLifts", new { httproute = "" })', {
+                        type: 'get', contentType: 'application/json',
+                        beforeSend: function (XMLHttpRequest) {
+                            XMLHttpRequest.setRequestHeader("TC-Authorization", localStorage.getItem('TC-Authorization'));
+                        },
+                        success: function (result) {
                             self.currentStats([]);
                             for (var i = 0, max = result.length; i < max; i++) {
                                 self.currentStats.push({
@@ -340,12 +395,16 @@
                                 });
                             }
                         }
-                    );
+                    });
                 };
 
                 self.loadGoals = function () {
-                    $.getJSON('@Url.RouteUrl("Goals", new { httproute = "" })',
-                        function (result) {
+                    $.ajax('@Url.RouteUrl("Goals", new { httproute = "" })', {
+                        type: 'get', contentType: 'application/json',
+                        beforeSend: function (XMLHttpRequest) {
+                            XMLHttpRequest.setRequestHeader("TC-Authorization", localStorage.getItem('TC-Authorization'));
+                        },
+                        success: function (result) {
                             self.goals([]);
                             for (var i = 0, max = result.length; i < max; i++) {
                                 self.goals.push({
@@ -356,7 +415,7 @@
                                 });
                             }
                         }
-                    );
+                    });
                 };
 
                 self.loadProfile = function () {
@@ -368,8 +427,12 @@
                 };
 
                 self.loadContests = function () {
-                    $.getJSON('@Url.RouteUrl("Contests", new { httproute = "" })',
-                        function (result) {
+                    $.ajax('@Url.RouteUrl("Contests", new { httproute = "" })', {
+                        type: 'get', contentType: 'application/json',
+                        beforeSend: function (XMLHttpRequest) {
+                            XMLHttpRequest.setRequestHeader("TC-Authorization", localStorage.getItem('TC-Authorization'));
+                        },
+                        success: function (result) {
                             self.contests([]);
                             for (var i = 0, max = result.length; i < max; i++) {
                                 self.contests.push({
@@ -383,12 +446,16 @@
                                 $.mobile.changePage('#contests');
                             }
                         }
-                    );
+                    });
                 };
 
                 self.loadCalendar = function () {
-                    $.getJSON('@Url.RouteUrl("WorkoutDates", new { httproute = "" })',
-                        function (result) {
+                    $.ajax('@Url.RouteUrl("WorkoutDates", new { httproute = "" })', {
+                        type: 'get', contentType: 'application/json',
+                        beforeSend: function (XMLHttpRequest) {
+                            XMLHttpRequest.setRequestHeader("TC-Authorization", localStorage.getItem('TC-Authorization'));
+                        },
+                        success: function (result) {
                             self.enteredWorkouts([]);
                             for (var i = 0, max = result.length; i < max; i++) {
                                 self.enteredWorkouts.push({
@@ -400,7 +467,7 @@
                                 $.mobile.changePage('#calendar');
                             }
                         }
-                    );
+                    });
                 };
 
 
@@ -432,6 +499,15 @@
             }
         };
         ko.applyBindings(TheChallenge.Profile());
+
+        $(document).ready(function () {
+            //if local storage is empty, view sign in
+            if(localStorage.getItem('TC-Authorization') == 'undefined' || localStorage.getItem('TC-Authorization') == null){
+                if ($.mobile) {
+                    $.mobile.changePage('#sign-in-dialog');
+                }
+            }
+        });
     </script>
 </body>
 </html>

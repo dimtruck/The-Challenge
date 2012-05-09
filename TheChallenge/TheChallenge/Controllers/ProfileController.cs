@@ -26,6 +26,7 @@ namespace TheChallenge.Controllers
         }
 
         // GET /api/profile/current
+        [CustomAuthorize]
         public IList<CurrentLiftsViewModel> Get(String current)
         {
 /***
