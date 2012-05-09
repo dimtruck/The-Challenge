@@ -10,7 +10,7 @@
     <link href="@System.Web.Optimization.BundleTable.Bundles.ResolveBundleUrl("~/Content/kendo/css")" rel="stylesheet" type="text/css" />
     <meta name="viewport" content="width=device-width" />
     <style>
-        #add-workout-panel label,#add-diet-panel label 
+        #add-workout-panel label,#add-diet-panel label, .pop-up-window label
         {
             float:left;
             font-family: 'Lucida Sans Unicode';
@@ -254,6 +254,37 @@
             </div>
         </section>
     </div>
+    <div class="pop-up-window" id="sign-in-window">
+        <div id ="sign-in-information">
+            <div>
+                <label for="sign-in-name">User Name:</label>
+                <input type="text" id="sign-in-name" data-bind="value: signInName" />
+            </div>
+		    <div>
+                <label for="sign-in-password">Password:</label>
+                <input type="password" id="sign-in-password"  data-bind="value: signInPassword" />
+		    </div>
+		    <button id="sign-in" class="k-button" data-bind="click: signIn">Sign In</button>
+		    <button id="view-register" class="k-button">Not registered?</button>
+        </div>
+    </div>
+    <div class="pop-up-window" id="register-window">
+        <div id ="register-information">
+            <div>
+                <label for="register-name">User Name:</label>
+                <input type="text" id="register-name" data-bind="value: registerName"  />
+            </div>
+		    <div>
+                <label for="register-password">Password:</label>
+                <input type="password" id="register-password" data-bind="value: registerPassword" />
+		    </div>
+		    <div>
+                <label for="confirm-register-password">Confirm Password:</label>
+                <input type="password" id="confirm-register-password" data-bind="value: confirmPassword" validationMessage="Please verify that confirmed password and password match." />
+		    </div>
+		    <button id="register" class="k-button" data-bind="click: register">Register</button>
+        </div>
+    </div>
 </body>
 <script id="preview-row-template" type="text/x-kendo-template">
     <tr>
@@ -308,53 +339,65 @@
 
         });
 
-        var currentLiftsSource = new kendo.data.DataSource({
-            transport: {
-                read: {
-                    url: '@Url.RouteUrl("CurrentLifts", new { httproute = "" })'
+        var tcAuthorizationToken = null;
+
+        function InitiateUserData() {
+            var currentLiftsSource = new kendo.data.DataSource({
+                transport: {
+                    read: {
+                        beforeSend: function (XMLHttpRequest) {
+                            XMLHttpRequest.setRequestHeader("TC-Authorization", tcAuthorizationToken != null? tcAuthorizationToken: localStorage.getItem('TC-Authorization'));
+                        },
+                        url: '@Url.RouteUrl("CurrentLifts", new { httproute = "" })'
+                    },
+                    type: 'json',
+                    pagesize: 5
+
                 },
-                type: 'json',
-                pagesize: 5
+                group: {
+                    field: "EventType",
+                    value: "Event Type"
+                }
+            });
 
-            },
-            group: {
-                field: "EventType",
-                value: "Event Type"
-            }
-        });
+            var goalsSource = new kendo.data.DataSource({
+                transport: {
+                    read: {
+                        beforeSend: function (XMLHttpRequest) {
+                            XMLHttpRequest.setRequestHeader("TC-Authorization", tcAuthorizationToken != null ? tcAuthorizationToken : localStorage.getItem('TC-Authorization'));
+                        },
+                        url: '@Url.RouteUrl("Goals", new { httproute = "" })'
+                    },
+                    type: 'json',
+                    pagesize: 5
 
-        var goalsSource = new kendo.data.DataSource({
-            transport: {
-                read: {
-                    url: '@Url.RouteUrl("Goals", new { httproute = "" })'
+                }
+            });
+
+            var contestSource = new kendo.data.DataSource({
+                transport: {
+                    read: {
+                        beforeSend: function (XMLHttpRequest) {
+                            XMLHttpRequest.setRequestHeader("TC-Authorization", tcAuthorizationToken != null ? tcAuthorizationToken : localStorage.getItem('TC-Authorization'));
+                        },
+                        url: '@Url.RouteUrl("Contests", new { httproute = "" })'
+                    },
+                    type: 'json',
+                    pagesize: 5
+                }
+            });
+
+            $("#contestTable").kendoGrid({
+                dataSource: contestSource,
+                sortable: true,
+                scrollable: true,
+                pageable: true,
+                detailTemplate: kendo.template($("#contest-events-template").html()),
+                detailInit: detailInit,
+                dataBound: function () {
+                    this.expandRow(this.tbody.find("tr.k-master-row").first());
                 },
-                type: 'json',
-                pagesize: 5
-
-            }
-        });
-
-        var contestSource = new kendo.data.DataSource({
-            transport: {
-                read: {
-                    url: '@Url.RouteUrl("Contests", new { httproute = "" })'
-                },
-                type: 'json',
-                pagesize: 5
-            }
-        });
-
-        $("#contestTable").kendoGrid({
-            dataSource: contestSource,
-            sortable: true,
-            scrollable: true,
-            pageable: true,
-            detailTemplate: kendo.template($("#contest-events-template").html()),
-            detailInit: detailInit,
-            dataBound: function () {
-                this.expandRow(this.tbody.find("tr.k-master-row").first());
-            },
-            columns: [
+                columns: [
 				{
 				    field: "Name",
 				    title: "Contest Name",
@@ -378,13 +421,13 @@
 				}
 			]
 
-        });
+            });
 
-        $("#currentLiftsTable").kendoGrid({
-            dataSource: currentLiftsSource,
-            groupable: true,
-            pageable: true,
-            columns: [
+            $("#currentLiftsTable").kendoGrid({
+                dataSource: currentLiftsSource,
+                groupable: true,
+                pageable: true,
+                columns: [
 				{
 				    field: "Event",
 				    title: "Exercise Name",
@@ -402,12 +445,12 @@
 				}
 			]
 
-        });
+            });
 
-        $("#goalsTable").kendoGrid({
-            dataSource: goalsSource,
-            pageable: true,
-            columns: [
+            $("#goalsTable").kendoGrid({
+                dataSource: goalsSource,
+                pageable: true,
+                columns: [
 				        {
 				            field: "Event.Name",
 				            title: "Exercise Name",
@@ -429,7 +472,8 @@
 				        }
 			        ]
 
-        });
+            });
+        }
         /**
         THIS IS FOR CALENDAR
         */
@@ -439,6 +483,9 @@
         function getWorkoutDates() {
             $.ajax('@Url.RouteUrl("WorkoutDates", new { httproute = "" })', {
                 type: 'get', contentType: 'application/json',
+                beforeSend: function (XMLHttpRequest) {
+                    XMLHttpRequest.setRequestHeader("TC-Authorization", tcAuthorizationToken != null ? tcAuthorizationToken : localStorage.getItem('TC-Authorization'));
+                },
                 success: function (result) {
                     for (var i = 0, max = result.length; i < max; i++)
                         dateResults.push(parseInt(result[i].substr(6, 13)));
@@ -455,10 +502,12 @@
                     });
                     $("#contestTable").data("kendoGrid").dataSource.read();
                 },
-                error: function (returnedObject, t2, t3) {
-                    console.log(returnedObject);
-                    console.log(t2);
-                    console.log(t3);
+                error: function (result, t2, t3) {
+                    if (result.status === 403) {
+                        var window = $("#sign-in-window").data('kendoWindow');
+                        window.center();
+                        window.open();
+                    }
                 }
             });
         }
@@ -470,7 +519,11 @@
             if ($.inArray(+this.value(), dateResults) != -1) {
                 $('#add-workout-id').css('display', 'none');
                 $.ajax('@Url.RouteUrl("WorkoutDates", new { httproute = "" })/' + kendo.toString(this.value(), 'MM-dd-yyyy'), {
-                    type: 'get', contentType: 'application/json',
+                    type: 'get',
+                    contentType: 'application/json',
+                    beforeSend: function (XMLHttpRequest) {
+                        XMLHttpRequest.setRequestHeader("TC-Authorization", tcAuthorizationToken != null ? tcAuthorizationToken : localStorage.getItem('TC-Authorization'));
+                    },
                     success: function (result) {
                         $('#workout-view').empty();
                         $('#workout-view').css('display', 'block');
@@ -536,6 +589,9 @@
                 dataSource: {
                     transport: {
                         read: {
+                            beforeSend: function (XMLHttpRequest) {
+                                XMLHttpRequest.setRequestHeader("TC-Authorization", tcAuthorizationToken != null ? tcAuthorizationToken : localStorage.getItem('TC-Authorization'));
+                            },
                             url: '@Url.RouteUrl("ContestEvents", new {httproute = "" })/' + e.data.ContestId
                         },
                         type: 'json'
@@ -576,12 +632,23 @@
 
         var validatable = $("#add-workout-id").kendoValidator().data("kendoValidator");
         var dietValidatable = $("#add-diet-id").kendoValidator().data("kendoValidator");
+        var registerValidatable = $("#register-information").kendoValidator({
+            rules: {
+                custom: function (input) {
+                    if (!input.is("[id=confirm-register-password]")) return true;
+                    return input.is("[id=confirm-register-password]") && input.val() === $('#register-password').val();
+                }
+            }
+        }).data('kendoValidator');
 
         var viewModel = kendo.observable({
             events: new kendo.data.DataSource({
                 transport: {
                     read: {
                         url: '@Url.RouteUrl("Exercises", new { httproute = "" })',
+                        beforeSend: function (XMLHttpRequest) {
+                            XMLHttpRequest.setRequestHeader("TC-Authorization", tcAuthorizationToken != null ? tcAuthorizationToken : localStorage.getItem('TC-Authorization'));
+                        },
                         dataType: "json"
                     }
                 }
@@ -642,6 +709,9 @@
                 $.ajax('@Url.RouteUrl("SaveExercise", new { httproute = "" })', {
                     data: JSON.stringify(post),
                     type: 'post', contentType: 'application/json',
+                    beforeSend: function (XMLHttpRequest) {
+                        XMLHttpRequest.setRequestHeader("TC-Authorization", tcAuthorizationToken != null ? tcAuthorizationToken : localStorage.getItem('TC-Authorization'));
+                    },
                     success: function (result) {
                         self.set("exercises", []);
                         alert('Saved!');
@@ -670,6 +740,9 @@
                 transport: {
                     read: {
                         url: '@Url.RouteUrl("Foods", new { httproute = "" })',
+                        beforeSend: function (XMLHttpRequest) {
+                            XMLHttpRequest.setRequestHeader("TC-Authorization", tcAuthorizationToken != null ? tcAuthorizationToken : localStorage.getItem('TC-Authorization'));
+                        },
                         dataType: "json"
                     }
                 }
@@ -723,6 +796,9 @@
                 $.ajax('@Url.RouteUrl("SaveExercise", new { httproute = "" })', {
                     data: JSON.stringify(post),
                     type: 'post', contentType: 'application/json',
+                    beforeSend: function (XMLHttpRequest) {
+                        XMLHttpRequest.setRequestHeader("TC-Authorization", tcAuthorizationToken != null ? tcAuthorizationToken : localStorage.getItem('TC-Authorization'));
+                    },
                     success: function (result) {
                         self.set("exercises", []);
                         alert('Saved!');
@@ -745,9 +821,103 @@
 
         kendo.bind($("#add-diet-id"), dietViewModel);
 
+        var registerModel = kendo.observable({
+            registerName: '',
+            registerPassword: '',
+            confirmPassword: '',
+            register: function () {
+                if (registerValidatable.validate()) {
+                    var self = this;
+                    $.ajax('@Url.RouteUrl("Register", new { httproute = "" })', {
+                        data: JSON.stringify({ UserName: this.get('registerName'), Password: this.get('registerPassword') }),
+                        type: 'post', contentType: 'application/json',
+                        success: function (result, status, xmlResponse) {
+                            if (typeof (localStorage) == 'undefined') {
+                                tcAuthorizationToken = xmlResponse.getResponseHeader('TC-Authorization');
+                            } else {
+                                localStorage.setItem('TC-Authorization', xmlResponse.getResponseHeader('TC-Authorization'));
+                            }
+                            var registerWindow = $("#register-window").data('kendoWindow');
+                            registerWindow.close();
+                            InitiateUserData();
+                            getWorkoutDates();
+                        },
+                        error: function (returnedObject, t2, t3) {
+                            console.log(returnedObject);
+                            console.log(t2);
+                            console.log(t3);
+                        }
+                    });
+                }
+
+            }
+        });
+
+        kendo.bind($("#register-information"), registerModel);
+
+        var signInModel = kendo.observable({
+            signInName: '',
+            signInPassword: '',
+            signIn: function () {
+                var self = this;
+                $.ajax('@Url.RouteUrl("SignIn", new { httproute = "" })', {
+                    data: JSON.stringify({ UserName: this.get('signInName'), Password: this.get('signInPassword') }),
+                    type: 'post', contentType: 'application/json',
+                    success: function (result, status, xmlResponse) {
+                        tcAuthorizationToken = xmlResponse.getResponseHeader('TC-Authorization');
+                        var window = $("#sign-in-window").data('kendoWindow');
+                        window.close();
+                        InitiateUserData();
+                        getWorkoutDates();
+                    },
+                    error: function (returnedObject, t2, t3) {
+                        console.log(returnedObject);
+                        console.log(t2);
+                        console.log(t3);
+                    }
+                });
+            }
+        });
+
+        kendo.bind($("#sign-in-information"), signInModel);
+
+
+        $('#view-register').click(function () {
+            var signInWindow = $("#sign-in-window").data('kendoWindow');
+            signInWindow.close();
+            var registerWindow = $("#register-window").data('kendoWindow');
+            registerWindow.center();
+            registerWindow.open();
+        });
+
 
         $("#workout-preview-table").kendoGrid();
         $("#diet-preview-table").kendoGrid();
+
+
+        //sign in
+        $("#sign-in-window").kendoWindow({
+            actions: ["Maximize"],
+            draggable: false,
+            height: "300px",
+            modal: true,
+            resizable: false,
+            title: "Sign In",
+            visible: false,
+            width: "500px"
+        });
+
+        $("#register-window").kendoWindow({
+            actions: ["Maximize"],
+            draggable: false,
+            height: "300px",
+            modal: true,
+            resizable: false,
+            title: "Sign In",
+            visible: false,
+            width: "500px"
+        });
+
     });
 </script>
 </html>

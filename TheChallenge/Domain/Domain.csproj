@@ -49,13 +49,16 @@
     <Compile Include="Entities\Event.cs" />
     <Compile Include="Entities\ExerciseEntry.cs" />
     <Compile Include="Entities\Food.cs" />
+    <Compile Include="Entities\User.cs" />
     <Compile Include="Entities\Workout.cs" />
     <Compile Include="Repository\ContestRepository.cs" />
     <Compile Include="Entities\Contest.cs" />
     <Compile Include="Repository\FoodRepository.cs" />
     <Compile Include="Repository\IFoodRepository.cs" />
+    <Compile Include="Repository\IUserRepository.cs" />
     <Compile Include="Repository\ProfileRepository.cs" />
     <Compile Include="Repository\IProfileRepository.cs" />
+    <Compile Include="Repository\UserRepository.cs" />
     <Compile Include="Repository\WorkoutRepository.cs" />
     <Compile Include="Repository\IWorkoutRepository.cs" />
     <Compile Include="Repository\ExerciseRepository.cs" />

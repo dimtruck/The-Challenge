@@ -6,6 +6,7 @@ using System.Web.Http;
 using Domain.Repository;
 using Domain.Entities;
 using TheChallenge.Models;
+using TheChallenge.Helpers;
 
 namespace TheChallenge.Controllers
 {
@@ -21,6 +22,7 @@ namespace TheChallenge.Controllers
         }
 
         // GET /api/exercise
+        [CustomAuthorize]
         public IEnumerable<EventViewModel> Get()
         {
             IList<Event> eventList = this.repository.RetrieveExercises();
@@ -38,6 +40,7 @@ namespace TheChallenge.Controllers
         }
 
         // POST /api/exercise
+        [CustomAuthorize]
         public HttpResponseMessage Post(SaveWorkoutViewModel value)
         {
             Workout workout = new Workout(){

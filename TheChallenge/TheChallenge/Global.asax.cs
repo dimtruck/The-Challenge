@@ -46,6 +46,18 @@ namespace TheChallenge
             );
 
             routes.MapHttpRoute(
+                name: "Register",
+                routeTemplate: "api/account",
+                defaults: new { controller = "account" }
+            );
+
+            routes.MapHttpRoute(
+                name: "SignIn",
+                routeTemplate: "api/signin",
+                defaults: new { controller = "signin" }
+            );
+
+            routes.MapHttpRoute(
                 name: "ContestEvents",
                 routeTemplate: "api/contest/{id}",
                 defaults: new { controller = "contest", id = RouteParameter.Optional }

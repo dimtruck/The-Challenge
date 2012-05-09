@@ -6,6 +6,7 @@ using System.Web.Http;
 using TheChallenge.Models;
 using Domain.Repository;
 using Domain.Entities;
+using TheChallenge.Helpers;
 
 namespace TheChallenge.Controllers
 {

@@ -6,6 +6,7 @@ using System.Web.Http;
 using TheChallenge.Models;
 using Domain.Entities;
 using Domain.Repository;
+using TheChallenge.Helpers;
 
 namespace TheChallenge.Controllers
 {
@@ -19,6 +20,7 @@ namespace TheChallenge.Controllers
         }
 
         // GET /api/goal
+        [CustomAuthorize]
         public IList<ContestEventGoalViewModel> Get()
         {
             IList<ContestEventGoal> contestEventGoalList = repository.RetrieveGoals();

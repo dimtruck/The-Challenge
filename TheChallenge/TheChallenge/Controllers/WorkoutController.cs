@@ -6,6 +6,7 @@ using System.Web.Http;
 using Domain.Repository;
 using Domain.Entities;
 using TheChallenge.Models;
+using TheChallenge.Helpers;
 
 namespace TheChallenge.Controllers
 {
@@ -20,6 +21,7 @@ namespace TheChallenge.Controllers
         }
 
         // GET /api/workout
+        [CustomAuthorize]
         public IEnumerable<DateTime> Get()
         {
             IList<DateTime> workoutDates = repository.GetWorkoutDates();
@@ -27,6 +29,7 @@ namespace TheChallenge.Controllers
         }
 
         // GET /api/workout/date
+        [CustomAuthorize]
         public IList<SaveExerciseViewModel> Get(DateTime entryDate)
         {
             Workout workout = repository.GetWorkout(entryDate);

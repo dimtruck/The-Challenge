@@ -6,6 +6,7 @@ using System.Web.Http;
 using Domain.Repository;
 using Domain.Entities;
 using TheChallenge.Models;
+using TheChallenge.Helpers;
 
 namespace TheChallenge.Controllers
 {
@@ -19,6 +20,7 @@ namespace TheChallenge.Controllers
         }
 
         // GET /api/food
+        [CustomAuthorize]
         public IEnumerable<FoodViewModel> Get()
         {
             IList<Food> foodList = this.repository.RetrieveFoodNames();

@@ -9,7 +9,7 @@ public class DebuggerShim
     //[Test]
     public void debug()
     {
-        var tagOrClassName = "class_or_tag_you_want_to_debug";
+        var tagOrClassName = "CryptoTest";
 
         var invocation = new RunnerInvocation(Assembly.GetExecutingAssembly().Location, tagOrClassName);
 
@@ -18,4 +18,5 @@ public class DebuggerShim
         //assert that there aren't any failures
         contexts.Failures().Count().should_be(0);
     }
+
 }
