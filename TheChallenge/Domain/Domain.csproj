@@ -49,6 +49,8 @@
     <Compile Include="Entities\Event.cs" />
     <Compile Include="Entities\ExerciseEntry.cs" />
     <Compile Include="Entities\Food.cs" />
+    <Compile Include="Entities\Nutrient.cs" />
+    <Compile Include="Entities\Serving.cs" />
     <Compile Include="Entities\User.cs" />
     <Compile Include="Entities\Workout.cs" />
     <Compile Include="Repository\ContestRepository.cs" />

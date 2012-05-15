@@ -136,6 +136,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\BlogController.cs" />
     <Compile Include="Controllers\ContestController.cs" />
     <Compile Include="Controllers\ExerciseController.cs" />
     <Compile Include="Controllers\FoodController.cs" />
@@ -166,9 +167,11 @@
     <Compile Include="Models\EventTypeEnum.cs" />
     <Compile Include="Models\EventViewModel.cs" />
     <Compile Include="Models\FoodViewModel.cs" />
+    <Compile Include="Models\NutrientViewModel.cs" />
     <Compile Include="Models\RegisterViewModel.cs" />
     <Compile Include="Models\SaveExerciseViewModel.cs" />
     <Compile Include="Models\SaveWorkoutViewModel.cs" />
+    <Compile Include="Models\ServingViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -260,6 +263,10 @@
     <Content Include="Content\themes\base\jquery.ui.tabs.css" />
     <Content Include="Content\themes\base\jquery.ui.theme.css" />
     <Content Include="Global.asax" />
+    <Content Include="Images\sign_out.png" />
+    <Content Include="Images\help.png" />
+    <Content Include="Images\profile.png" />
+    <Content Include="Images\settings.png" />
     <Content Include="Scripts\jquery-1.6.4-vsdoc.js" />
     <Content Include="Scripts\jquery-1.6.4.js" />
     <Content Include="Scripts\jquery-1.6.4.min.js" />
@@ -349,7 +356,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>56850</DevelopmentServerPort>
+          <DevelopmentServerPort>65496</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>

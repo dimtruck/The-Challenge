@@ -17,6 +17,13 @@ namespace TheChallenge.Controllers
         {
             this.repository = repository;
         }
+
+        public HttpResponseMessage Get()
+        {
+            this.Request.Headers.Remove("TC-Authorization");
+            return new HttpResponseMessage(System.Net.HttpStatusCode.NoContent);
+        }
+
         // POST /api/account
         public HttpResponseMessage Post(RegisterViewModel value)
         {

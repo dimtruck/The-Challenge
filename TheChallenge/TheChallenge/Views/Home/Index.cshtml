@@ -10,6 +10,10 @@
     <link href="@System.Web.Optimization.BundleTable.Bundles.ResolveBundleUrl("~/Content/kendo/css")" rel="stylesheet" type="text/css" />
     <meta name="viewport" content="width=device-width" />
     <style>
+        #serving-repository-view
+        {
+            display:none;
+        }
         #add-workout-panel label,#add-diet-panel label, .pop-up-window label
         {
             float:left;
@@ -30,20 +34,75 @@
             left: -10px;
             top: -1px;
         }
+        
+        #outer-container
+        {
+            margin-top: 80px;
+            width:100%;
+        }
+        
+        #container
+        {
+            margin: 0 auto;
+            width:80%;
+            min-width:800px;
+        }
+        
+        header
+        {
+            position:fixed;
+            top: 0;
+            right: 0;
+            background-color:#333;
+            width: 100%;
+            z-index: 1000;
+        }
+        
+        header .content-wrapper
+        {
+            margin: 0 auto;
+            width: 80%;
+            height: 65px;
+            min-width:800px;
+        }
 
+        header .content-wrapper .header-info
+        {
+            margin-top: 10px;
+        }
+
+        header .content-wrapper img
+        {
+            height: 48px;
+            width: 48px;
+            margin-right: 3em;
+            cursor:pointer;
+        }
+        
+        header .content-wrapper .last-image
+        {
+            margin-right:0;
+            float:right;
+        }
     </style>
 </head>
 <body>
     <header>
         <div class="content-wrapper">  
-                 
-            <div class="float-left">
+            <div class="header-info">
+                <img src="@Url.Content("~/Images/profile.png")" alt="profile" />
+                <img src="@Url.Content("~/Images/settings.png")" alt="settings" />
+                <img src="@Url.Content("~/Images/help.png")" alt="help" />
+                <img class="last-image" src="@Url.Content("~/Images/sign_out.png")" alt="sign out" id="sign-out" />
+            </div>
+            <!--<div class="float-left">
                 <p class="site-title"><a href="/">@ViewBag.isMobileOn</a>
                 </p>
-            </div>
+            </div>-->
         </div>
     </header>
-    <div class="k-content">
+    <div id="outer-container">
+        <div id="container" class="k-content">
         <section class="featured">
             <div id="the-challenge-container">
                 <div id="the-challenge-tabstrip">
@@ -64,7 +123,7 @@
 							Reports
 						</li>
 						<li>
-							Admin
+							Food Repository
 						</li>
 					</ul>
                     <div>
@@ -248,11 +307,18 @@
                     </div>
                     <div></div>
                     <div></div>
-                    <div></div>
+                    <div>
+                        <div class="sub-container">
+                             <input id="food-repository"/>
+                             <input id="serving-repository-view" />
+                             <div id="nutrient-repository-view" />
+                        </div>
+                    </div>
                     
                 </div>
             </div>
         </section>
+    </div>
     </div>
     <div class="pop-up-window" id="sign-in-window">
         <div id ="sign-in-information">
@@ -343,6 +409,7 @@
         var tcAuthorizationToken = null;
         var dateResults = [];
 
+
         function InitiateUserData() {
             var currentLiftsSource = new kendo.data.DataSource({
                 transport: {
@@ -386,6 +453,18 @@
                     },
                     type: 'json',
                     pagesize: 5
+                }
+            });
+
+            var foodSource = new kendo.data.DataSource({
+                transport: {
+                    read: {
+                        beforeSend: function (XMLHttpRequest) {
+                            XMLHttpRequest.setRequestHeader("TC-Authorization", tcAuthorizationToken != null ? tcAuthorizationToken : localStorage.getItem('TC-Authorization'));
+                        },
+                        url: '@Url.RouteUrl("Foods", new { httproute = "" })'
+                    },
+                    type: 'json'
                 }
             });
 
@@ -740,12 +819,12 @@
             events: new kendo.data.DataSource({
                 transport: {
                     read: {
-                        url: '@Url.RouteUrl("Foods", new { httproute = "" })',
                         beforeSend: function (XMLHttpRequest) {
                             XMLHttpRequest.setRequestHeader("TC-Authorization", tcAuthorizationToken != null ? tcAuthorizationToken : localStorage.getItem('TC-Authorization'));
                         },
-                        dataType: "json"
-                    }
+                        url: '@Url.RouteUrl("Foods", new { httproute = "" })'
+                    },
+                    type: 'json'
                 }
             }),
             entryDate: new Date(),
@@ -919,12 +998,109 @@
         });
 
 
+        $('#sign-out').click(function () {
+            $.ajax('@Url.RouteUrl("SignOut", new { httproute = "" })', {
+                type: 'get', contentType: 'application/json',
+                beforeSend: function (XMLHttpRequest) {
+                    XMLHttpRequest.setRequestHeader("TC-Authorization", tcAuthorizationToken != null ? tcAuthorizationToken : localStorage.getItem('TC-Authorization'));
+                },
+                success: function (result) {
+                    //clear all values
+                    $('#contestTable').empty();
+                    $('#contestTable').kendoGrid();
+                    $('#currentLiftsTable').empty();
+                    $('#currentLiftsTable').kendoGrid();
+                    $('#goalsTable').empty();
+                    $('#goalsTable').kendoGrid();
+                    console.log($('#calendar').data('kendoCalendar'));
+                    localStorage.removeItem('TC-Authorization');
+                    var window = $("#sign-in-window").data('kendoWindow');
+                    window.center();
+                    window.open();
+                },
+                error: function (returnedObject, t2, t3) {
+                    console.log(returnedObject);
+                    console.log(t2);
+                    console.log(t3);
+                }
+            });
+        });
+
         if (localStorage.getItem('TC-Authorization') == 'undefined' || localStorage.getItem('TC-Authorization') == null) {
             var window = $("#sign-in-window").data('kendoWindow');
             window.center();
             window.open();
         } else {
             InitiateUserData();
+        }
+
+        var foodSource = new kendo.data.DataSource({
+            transport: {
+                read: {
+                    beforeSend: function (XMLHttpRequest) {
+                        XMLHttpRequest.setRequestHeader("TC-Authorization", tcAuthorizationToken != null ? tcAuthorizationToken : localStorage.getItem('TC-Authorization'));
+                    },
+                    url: '@Url.RouteUrl("Foods", new { httproute = "" })'
+                },
+                type: 'json'
+            }
+        });
+
+        $('#food-repository').kendoAutoComplete({
+            select: selectFood,
+            dataTextField: "Name",
+            dataSource: foodSource
+        });
+
+        function selectFood(e) {
+            $.ajax('@Url.RouteUrl("Foods", new { httproute = "" })/' + this.dataItem(e.item.index()).Id, {
+                type: 'get', contentType: 'application/json',
+                beforeSend: function (XMLHttpRequest) {
+                    XMLHttpRequest.setRequestHeader("TC-Authorization", tcAuthorizationToken != null ? tcAuthorizationToken : localStorage.getItem('TC-Authorization'));
+                },
+                success: function (result) {
+                    //get servings
+                    $("#serving-repository-view").css('display', 'block');
+                    $("#serving-repository-view").kendoDropDownList({
+                        dataTextField: "Description",
+                        dataValueField: "Id",
+                        select: function(e){
+                            LoadNutritionalTable(this.dataItem(e.item.index()).WeightInGrams, result);
+                        },
+                        template: "${ data.Amount } - ${ data.Description }",
+                        dataSource: result.AvailableServings
+                    });
+                    LoadNutritionalTable($("#serving-repository-view").data('kendoDropDownList').dataItem(0).WeightInGrams, result);
+                },
+                error: function (returnedObject, t2, t3) {
+                    console.log(returnedObject);
+                    console.log(t2);
+                    console.log(t3);
+                }
+            });
+        }
+
+        function LoadNutritionalTable(servingMultiplier, result){
+            $('#nutrient-repository-view').empty();
+            $('#nutrient-repository-view').kendoGrid({
+                columns: ["Description",
+                    {
+                        field: "AmountIn100Grams",
+                        title: "Amount",
+                        template: '#= AmountIn100Grams * ' + servingMultiplier + ' / 100 #',
+                    }, "Units",
+                    {
+                        field: "IsNutrientAdded",
+                        title: "Additive?"
+                    }
+                ],
+                pageable: true,
+                sortable: true,
+                dataSource: {
+                    data: result.AvailableNutrients,
+                    pageSize: 10
+                }
+            });
         }
     });
 </script>

@@ -9,5 +9,7 @@ namespace TheChallenge.Models
     {
         public int Id { get; set; }
         public String Name { get; set; }
+        public IList<NutrientViewModel> Nutrients { get; set; }
+        public IList<ServingViewModel> Servings { get; set; }
     }
 }

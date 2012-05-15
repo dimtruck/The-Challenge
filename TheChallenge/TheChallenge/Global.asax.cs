@@ -52,6 +52,12 @@ namespace TheChallenge
             );
 
             routes.MapHttpRoute(
+                name: "SignOut",
+                routeTemplate: "api/account",
+                defaults: new { controller = "account" }
+            );
+
+            routes.MapHttpRoute(
                 name: "SignIn",
                 routeTemplate: "api/signin",
                 defaults: new { controller = "signin" }
@@ -71,8 +77,8 @@ namespace TheChallenge
 
             routes.MapHttpRoute(
                 name: "Foods",
-                routeTemplate: "api/food",
-                defaults: new { controller = "food" }
+                routeTemplate: "api/food/{id}",
+                defaults: new { controller = "food", id= RouteParameter.Optional }
             );
 
             routes.MapHttpRoute(
@@ -185,6 +191,8 @@ namespace TheChallenge
                 .ForMember(dest => dest.EventGoal, opt => opt.ResolveUsing<ContestEventDataResolver>());
             AutoMapper.Mapper.CreateMap<ContestEventGoal, ContestEventGoalViewModel>()
                 .ForMember(dest => dest.Result, opt => opt.ResolveUsing<GoalDataResolver>());
+            AutoMapper.Mapper.CreateMap<Nutrient, NutrientViewModel>();
+            AutoMapper.Mapper.CreateMap<Serving, ServingViewModel>();
             AutoMapper.Mapper.CreateMap<Food, FoodViewModel>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Int32.Parse(src.Id)));
 
