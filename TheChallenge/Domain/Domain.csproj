@@ -49,6 +49,8 @@
     <Compile Include="Entities\Event.cs" />
     <Compile Include="Entities\ExerciseEntry.cs" />
     <Compile Include="Entities\Food.cs" />
+    <Compile Include="Entities\FoodEntry.cs" />
+    <Compile Include="Entities\Meal.cs" />
     <Compile Include="Entities\Nutrient.cs" />
     <Compile Include="Entities\Serving.cs" />
     <Compile Include="Entities\User.cs" />
@@ -57,7 +59,9 @@
     <Compile Include="Entities\Contest.cs" />
     <Compile Include="Repository\FoodRepository.cs" />
     <Compile Include="Repository\IFoodRepository.cs" />
+    <Compile Include="Repository\IMealRepository.cs" />
     <Compile Include="Repository\IUserRepository.cs" />
+    <Compile Include="Repository\MealRepository.cs" />
     <Compile Include="Repository\ProfileRepository.cs" />
     <Compile Include="Repository\IProfileRepository.cs" />
     <Compile Include="Repository\UserRepository.cs" />

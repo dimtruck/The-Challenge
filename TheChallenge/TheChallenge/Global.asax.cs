@@ -82,6 +82,12 @@ namespace TheChallenge
             );
 
             routes.MapHttpRoute(
+                name: "SaveFood",
+                routeTemplate: "api/food",
+                defaults: new { controller = "food"}
+            );
+
+            routes.MapHttpRoute(
                 name: "Goals",
                 routeTemplate: "api/goal",
                 defaults: new { controller = "goal" }
@@ -97,6 +103,12 @@ namespace TheChallenge
                 name: "WorkoutDates",
                 routeTemplate: "api/workout/{entryDate}",
                 defaults: new { controller = "workout", entryDate = RouteParameter.Optional }
+            );
+
+            routes.MapHttpRoute(
+                name: "MealDates",
+                routeTemplate: "api/meal/{entryDate}",
+                defaults: new { controller = "meal", entryDate = RouteParameter.Optional }
             );
 
             routes.MapHttpRoute(
@@ -196,6 +208,11 @@ namespace TheChallenge
             AutoMapper.Mapper.CreateMap<Food, FoodViewModel>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Int32.Parse(src.Id)));
 
+            AutoMapper.Mapper.CreateMap<Meal, SaveFoodViewModel>()
+                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.MealDate))
+                .ForMember(dest => dest.FoodId, opt => opt.MapFrom(src => src.Foods));
+            AutoMapper.Mapper.CreateMap<SaveFoodViewModel, FoodEntry>()
+                .ForMember(dest => dest.ServingId, opt => opt.MapFrom(src => src.ServingTypeId));
 
         }
     }

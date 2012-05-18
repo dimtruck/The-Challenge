@@ -269,19 +269,20 @@
 		                            <div id="add-diet-panel" class="k-widget k-header" style="padding:10px;">
                                         <div>
                                             <label for="add-diet-date">Date:</label>
-                                            <input data-role="datepicker" data-bind="value: entryDate" />
+                                            <input data-role="datepicker" required data-bind="value: entryDate" />
                                         </div>
                                         <div>
                                             <label for="add-diet-time">Time:</label>
-                                            <input data-role="timepicker" data-bind="value: entryTime" />
+                                            <input data-role="timepicker" required data-bind="value: entryTime" />
                                         </div>
 			                            <div>
 				                            <label for="add-diet-name">Food:</label>
-				                            <input data-role="autocomplete" data-text-field="Name" id="add-diet-name" data-bind="source: events, value: foodName"/>
+				                            <input data-role="autocomplete" required data-text-field="Name" id="add-diet-name" data-bind="source: events, value: foodName, events: {close: selectFoodForAdding}"/>
 			                            </div>
 			                            <div>
 				                            <label for="add-diet-serving">Servings:</label>
 				                            <input data-role="numerictextbox" id="add-diet-serving" min="0" decimals="1" data-bind="value: dietServing" />
+				                            <input data-role="dropdownlist" data-text-field="Description" data-value-field="Id" id="add-diet-serving-type" data-bind="source: servingTypes, value: dietServingType" />
 			                            </div>
 			                            <button id="addFood" class="k-button" data-bind="click: addFood">Add Food</button>
 		                            </div>
@@ -291,6 +292,7 @@
 			                            <table id="diet-preview-table">
 				                            <thead>
 					                            <tr>
+                                                    <th>Date</th>
 						                            <th>Food</th>
 						                            <th>Serving Size</th>
                                                     <th>Action</th>
@@ -364,8 +366,9 @@
 </script>
 <script id="preview-diet-row-template" type="text/x-kendo-template">
     <tr>
-        <td data-bind="text: name"></td>
-        <td data-bind="text: servingSize"></td>
+        <td data-bind="text: Date"></td>
+        <td data-bind="text: Name"></td>
+        <td data-bind="text: serving"></td>
         <td><button data-bind="click: deleteFood" class="k-button">Delete</button></td>
     </tr>
 </script>
@@ -573,6 +576,7 @@
                     for (var i = 0, max = result.length; i < max; i++)
                         dateResults.push(parseInt(result[i].substr(6, 13)));
                     //+new Date(parseInt(result[i].substr(6)))
+                    console.log(dateResults);
                     $('#calendar').kendoCalendar({
                         month: {
                             // template for dates in month view
@@ -599,6 +603,21 @@
         function onChange() {
             if ($.inArray(+this.value(), dateResults) != -1) {
                 $('#add-workout-id').css('display', 'none');
+                //here add call to meal view too
+                $.ajax('@Url.RouteUrl("MealDates", new { httproute = "" })/' + kendo.toString(this.value(), 'MM-dd-yyyy'), {
+                    type: 'get',
+                    contentType: 'application/json',
+                    beforeSend: function (XMLHttpRequest) {
+                        XMLHttpRequest.setRequestHeader("TC-Authorization", tcAuthorizationToken != null ? tcAuthorizationToken : localStorage.getItem('TC-Authorization'));
+                    },
+                    success: function (result) {
+                    },
+                    error: function (returnedObject, t2, t3) {
+                        console.log(returnedObject);
+                        console.log(t2);
+                        console.log(t3);
+                    }
+                });
                 $.ajax('@Url.RouteUrl("WorkoutDates", new { httproute = "" })/' + kendo.toString(this.value(), 'MM-dd-yyyy'), {
                     type: 'get',
                     contentType: 'application/json',
@@ -827,16 +846,46 @@
                     type: 'json'
                 }
             }),
+            servingTypes: 0,
             entryDate: new Date(),
             entryTime: null,
             foodName: null,
             dietServing: 0,
+            dietServingType: null,
+            selectFoodForAdding: function(){
+                var self = this;
+                $.ajax('@Url.RouteUrl("Foods", new { httproute = "" })/' + this.get("foodName").Id, {
+                    type: 'get', contentType: 'application/json',
+                    beforeSend: function (XMLHttpRequest) {
+                        XMLHttpRequest.setRequestHeader("TC-Authorization", tcAuthorizationToken != null ? tcAuthorizationToken : localStorage.getItem('TC-Authorization'));
+                    },
+                    success: function (result) {
+                        //get servings
+                        self.set("servingTypes",new kendo.data.DataSource({data: result.AvailableServings}));
+                        self.set("dietServingType",result.AvailableServings[0]);
+                       // self.get("servingTypes").read();
+                    },
+                    error: function (returnedObject, t2, t3) {
+                        console.log(returnedObject);
+                        console.log(t2);
+                        console.log(t3);
+                    }
+                });
+            },
             addFood: function () {
+                var entryDate = kendo.toString(this.get("entryDate"),"MM/dd/yyyy");
+                var entryTime = kendo.toString(this.get("entryTime"),"hh:mm tt");
                 if (dietValidatable.validate()) {
                     this.get("foods").push({
-                        id: this.get("foodName").Id,
-                        name: this.get("foodName").Name,
-                        servingSize: parseInt(this.get("dietServing"))
+                        FoodId: this.get("foodName").Id,
+                        Name: this.get("foodName").Name,
+                        ServingSize: parseInt(this.get("dietServing")),
+                        servingTypeDesc: this.get("dietServingType").Description,
+                        ServingTypeId: this.get("dietServingType").Id,
+                        entryDate: entryDate,
+                        entryTime: entryTime,
+                        Date: entryDate + ' ' + entryTime,
+                        serving: parseInt(this.get("dietServing")) + ' ' + this.get("dietServingType").Description
                     });
                     this.set("isEnabled", true);
                 }
@@ -855,26 +904,23 @@
                 return this.get("foods").length;
             },
             save: function () {
+                console.log(JSON.stringify(this.foods));
                 //send this.exercises to get saved for the day and forget about it
                 //json call here for post
                 var foodsPost = [];
                 for (var i = 0, max = this.foods.length; i < max; i++) {
                     foodsPost.push({
-                        Id: this.foods[i].id,
-                        Name: this.foods[i].name,
-                        ServingSize: this.exercises[i].servingSize
+                        FoodId: this.foods[i].FoodId,
+                        Name: this.foods[i].Name,
+                        ServingSize: this.foods[i].ServingSize,
+                        Date: this.foods[i].Date,
+                        ServingTypeId: this.foods[i].ServingTypeId
                     });
                 }
 
-                var post = {
-                    Foods: foodsPost,
-                    EntryDate: this.get("entryDate"),
-                    EntryTime: this.get("entryTime")
-                }
-
                 var self = this;
-                $.ajax('@Url.RouteUrl("SaveExercise", new { httproute = "" })', {
-                    data: JSON.stringify(post),
+                $.ajax('@Url.RouteUrl("SaveFood", new { httproute = "" })', {
+                    data: JSON.stringify(foodsPost),
                     type: 'post', contentType: 'application/json',
                     beforeSend: function (XMLHttpRequest) {
                         XMLHttpRequest.setRequestHeader("TC-Authorization", tcAuthorizationToken != null ? tcAuthorizationToken : localStorage.getItem('TC-Authorization'));
@@ -894,6 +940,7 @@
                         console.log(t3);
                     }
                 });
+
             },
             foods: [],
             isEnabled: false

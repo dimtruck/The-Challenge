@@ -142,6 +142,7 @@
     <Compile Include="Controllers\FoodController.cs" />
     <Compile Include="Controllers\GoalController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\MealController.cs" />
     <Compile Include="Controllers\ProfileController.cs" />
     <Compile Include="Controllers\SignInController.cs" />
     <Compile Include="Controllers\WorkoutController.cs" />
@@ -170,6 +171,7 @@
     <Compile Include="Models\NutrientViewModel.cs" />
     <Compile Include="Models\RegisterViewModel.cs" />
     <Compile Include="Models\SaveExerciseViewModel.cs" />
+    <Compile Include="Models\SaveFoodViewModel.cs" />
     <Compile Include="Models\SaveWorkoutViewModel.cs" />
     <Compile Include="Models\ServingViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

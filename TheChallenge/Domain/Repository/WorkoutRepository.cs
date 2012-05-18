@@ -38,12 +38,14 @@ namespace Domain.Repository
 
         public IList<DateTime> GetWorkoutDates()
         {
+            //TODO: refactor to take out meal and workout and separate
             IList<DateTime> results;
             using (this.connection)
             {
                 this.connection.Open();
-                results = this.connection.Query<DateTime>("SELECT distinct WorkoutDate FROM [TheChallenge].[DimitryUshakov].[Workout]").ToList();
-
+                results = this.connection.Query<DateTime>(@"select distinct CAST(MealDate as date) from thechallenge.dimitryushakov.[meal]
+                                                            union
+                                                            SELECT distinct WorkoutDate FROM [TheChallenge].[DimitryUshakov].[Workout]").ToList();
             }
 
             return results;

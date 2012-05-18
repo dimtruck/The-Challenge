@@ -23,6 +23,10 @@ namespace TheChallenge.Helpers
                     ImplementedBy<ContestRepository>().
                     DependsOn(Parameter.ForKey("connectionString").Eq(connectionString)).
                     LifestylePerWebRequest(),
+                Component.For<IMealRepository>().
+                    ImplementedBy<MealRepository>().
+                    DependsOn(Parameter.ForKey("connectionString").Eq(connectionString)).
+                    LifestylePerWebRequest(),
                 Component.For<IUserRepository>().
                     ImplementedBy<UserRepository>().
                     DependsOn(Parameter.ForKey("connectionString").Eq(connectionString)).

@@ -13,10 +13,12 @@ namespace TheChallenge.Controllers
     public class FoodController : ApiController
     {
         private readonly IFoodRepository repository;
+        private readonly IMealRepository mealRepository;
 
-        public FoodController(IFoodRepository repository)
+        public FoodController(IFoodRepository repository, IMealRepository mealRepository)
         {
             this.repository = repository;
+            this.mealRepository = mealRepository;
         }
 
         // GET /api/food
@@ -72,8 +74,30 @@ namespace TheChallenge.Controllers
         }
 
         // POST /api/food
-        public void Post(string value)
+        [CustomAuthorize]
+        public HttpResponseMessage Post(IList<SaveFoodViewModel> value)
         {
+            IList<Meal> meals = new List<Meal>();
+            foreach (SaveFoodViewModel saveFoodViewModel in value)
+            {
+                Meal meal = meals.FirstOrDefault(t => t.MealDate.Equals(saveFoodViewModel.Date));
+                if (meal != null)
+                    meal.Foods.Add(AutoMapper.Mapper.Map<FoodEntry>(saveFoodViewModel));
+                else
+                {
+                    meal = new Meal()
+                    {
+                        Foods = new List<FoodEntry>(),
+                        MealDate = saveFoodViewModel.Date
+                    };
+                    meal.Foods.Add(AutoMapper.Mapper.Map<FoodEntry>(saveFoodViewModel));
+                    meals.Add(meal);
+                }
+            }
+            if(mealRepository.SaveMeals(meals))
+                return new HttpResponseMessage(System.Net.HttpStatusCode.Created);
+            else
+                return new HttpResponseMessage(System.Net.HttpStatusCode.Conflict);
         }
 
         // PUT /api/food/5
