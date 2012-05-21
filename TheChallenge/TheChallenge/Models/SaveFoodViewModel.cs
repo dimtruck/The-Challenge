@@ -9,7 +9,7 @@ namespace TheChallenge.Models
     {
         public int FoodId { get; set; }
         public String Name { get; set; }
-        public float ServingSize { get; set; }
+        public double ServingSize { get; set; }
         public int ServingTypeId { get; set; }
         public DateTime Date { get; set; }
     }

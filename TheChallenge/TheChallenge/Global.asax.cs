@@ -212,7 +212,12 @@ namespace TheChallenge
                 .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.MealDate))
                 .ForMember(dest => dest.FoodId, opt => opt.MapFrom(src => src.Foods));
             AutoMapper.Mapper.CreateMap<SaveFoodViewModel, FoodEntry>()
-                .ForMember(dest => dest.ServingId, opt => opt.MapFrom(src => src.ServingTypeId));
+                .ForMember(dest => dest.ServingId, opt => opt.MapFrom(src => src.ServingTypeId.ToString()))
+                .ForMember(dest => dest.FoodId, opt => opt.MapFrom(src => src.FoodId.ToString()));
+
+            AutoMapper.Mapper.CreateMap<FoodEntry, MealEntryViewModel>()
+                .ForMember(dest => dest.EntryDate, opt => opt.ResolveUsing<MealEntryDateResolver>());
+
 
         }
     }

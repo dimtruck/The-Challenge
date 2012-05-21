@@ -149,6 +149,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\MealEntryDateResolver.cs" />
     <Compile Include="Helpers\CustomAuthorizeAttribute.cs" />
     <Compile Include="Helpers\CustomLogger.cs" />
     <Compile Include="Helpers\Encryption\Crypto.cs" />
@@ -168,6 +169,7 @@
     <Compile Include="Models\EventTypeEnum.cs" />
     <Compile Include="Models\EventViewModel.cs" />
     <Compile Include="Models\FoodViewModel.cs" />
+    <Compile Include="Models\MealEntryViewModel.cs" />
     <Compile Include="Models\NutrientViewModel.cs" />
     <Compile Include="Models\RegisterViewModel.cs" />
     <Compile Include="Models\SaveExerciseViewModel.cs" />

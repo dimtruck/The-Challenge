@@ -10,5 +10,6 @@ namespace Domain.Repository
     {
         bool SaveMeals(IList<Meal> meals);
         IList<Meal> GetMeals(DateTime entryDate);
+        IList<FoodEntry> GetFoodEntries(DateTime entryDate);
     }
 }

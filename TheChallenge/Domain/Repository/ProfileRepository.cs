@@ -79,7 +79,7 @@ namespace Domain.Repository
 
         private IList<CurrentStatistic> RetrieveMax()
         {
-            return this.connection.Query<CurrentStatistic>(@"select	event.eventName as Exercise, workout.workoutDate as LastExecuted, cast(b.max_weight as nvarchar) as Result, 'MAX_LIFT' as EventGoalType 
+            return this.connection.Query<CurrentStatistic>(@"select	event.eventName as Exercise, max(workout.workoutDate) as LastExecuted, cast(b.max_weight as nvarchar) as Result, 'MAX_LIFT' as EventGoalType 
                                                             from	thechallenge.dimitryushakov.[workout] workout,
                                                                    (
                                                             			select	max(c.[weight]) as max_weight, a.eventid as eventId
@@ -94,7 +94,8 @@ namespace Domain.Repository
                                                                    thechallenge.dimitryushakov.[event] event 
                                                             where  event.eventId = workout.eventId 
                                                             and    workout.eventId = b.eventId 
-                                                            and	workout.[weight] = b.max_weight").ToList();
+                                                            and	workout.[weight] = b.max_weight
+                                                            group by event.eventName,b.max_weight").ToList();
 
         }
 

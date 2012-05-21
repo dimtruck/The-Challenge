@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Web.Http;
 using Domain.Repository;
 using Domain.Entities;
+using TheChallenge.Models;
 
 namespace TheChallenge.Controllers
 {
@@ -24,16 +25,14 @@ namespace TheChallenge.Controllers
         }
 
         // GET /api/meal/5
-        public string Get(DateTime entryDate)
+        public IList<MealEntryViewModel> Get(DateTime entryDate)
         {
-            IList<Meal> meals = repository.GetMeals(entryDate);
-            /*IList<SaveExerciseViewModel> saveExerciseViewModelList = new List<SaveExerciseViewModel>();
-            foreach (ExerciseEntry exerciseEntry in workout.ExerciseEntries)
-            {
-                saveExerciseViewModelList.Add(AutoMapper.Mapper.Map<SaveExerciseViewModel>(exerciseEntry));
-            }
-            return saveExerciseViewModelList;*/
-            return null;
+            IList<FoodEntry> foodEntries = repository.GetFoodEntries(entryDate);
+            IList<MealEntryViewModel> mealEntryViewModels = new List<MealEntryViewModel>();
+            foreach (FoodEntry foodEntry in foodEntries)
+                mealEntryViewModels.Add(AutoMapper.Mapper.Map<MealEntryViewModel>(foodEntry));
+            
+            return mealEntryViewModels;
         }
 
         // POST /api/meal
