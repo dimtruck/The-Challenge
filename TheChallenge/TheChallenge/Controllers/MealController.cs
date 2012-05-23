@@ -18,12 +18,6 @@ namespace TheChallenge.Controllers
             this.repository = repository;
         }
 
-        // GET /api/meal
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
-
         // GET /api/meal/5
         public IList<MealEntryViewModel> Get(DateTime entryDate)
         {
@@ -33,21 +27,6 @@ namespace TheChallenge.Controllers
                 mealEntryViewModels.Add(AutoMapper.Mapper.Map<MealEntryViewModel>(foodEntry));
             
             return mealEntryViewModels;
-        }
-
-        // POST /api/meal
-        public void Post(string value)
-        {
-        }
-
-        // PUT /api/meal/5
-        public void Put(int id, string value)
-        {
-        }
-
-        // DELETE /api/meal/5
-        public void Delete(int id)
-        {
         }
     }
 }

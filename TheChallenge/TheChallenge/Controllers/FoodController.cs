@@ -27,15 +27,14 @@ namespace TheChallenge.Controllers
         {
             IList<Food> foodList = this.repository.RetrieveFoods();
             IList<FoodViewModel> foodModelList = new List<FoodViewModel>();
-            foreach (Food food in foodList)
-            {
-                foodModelList.Add(AutoMapper.Mapper.Map<FoodViewModel>(food));
-            }
+            if (foodList != null)
+                foreach (Food food in foodList)
+                    foodModelList.Add(AutoMapper.Mapper.Map<FoodViewModel>(food));
             return foodModelList;
         }
 
         // GET /api/food/5
-        public Food Get(int id)
+        public FoodViewModel Get(int id)
         {
             //get entire food information
             //FOOD OBJECT
@@ -55,28 +54,37 @@ namespace TheChallenge.Controllers
             //      amount (float)
             //      description (string)
             //      weight_in_grams (float)
+            FoodViewModel model = new FoodViewModel();
             Food food = repository.RetrieveCompleteFood(id);
             if (food != null)
             {
-                FoodViewModel model = new FoodViewModel()
+                model = AutoMapper.Mapper.Map<FoodViewModel>(food);
+                if (food.AvailableNutrients != null)
                 {
-                    Nutrients = new List<NutrientViewModel>(),
-                    Servings = new List<ServingViewModel>()
-                };
-                if(food.AvailableNutrients != null)
+                    model.Nutrients = new List<NutrientViewModel>();
                     foreach (Nutrient nutrient in food.AvailableNutrients)
                         model.Nutrients.Add(AutoMapper.Mapper.Map<NutrientViewModel>(nutrient));
+                }
                 if (food.AvailableServings != null)
+                {
+                    model.Servings = new List<ServingViewModel>();
                     foreach (Serving serving in food.AvailableServings)
                         model.Servings.Add(AutoMapper.Mapper.Map<ServingViewModel>(serving));
+                }
             }
-            return food;
+            return model;
         }
 
         // POST /api/food
         [CustomAuthorize]
         public HttpResponseMessage Post(IList<SaveFoodViewModel> value)
         {
+            if(value == null)
+                return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest) { ReasonPhrase = "no valid request content present" };
+            if (value.FirstOrDefault(t => t.Date == null || t.Date == DateTime.MinValue || t.Date == DateTime.MaxValue) != null)
+                return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest) { ReasonPhrase = "no valid date present" };
+            if (value.FirstOrDefault(t => t.FoodId == 0) != null)
+                return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest) { ReasonPhrase = "no foods present" };
             IList<Meal> meals = new List<Meal>();
             foreach (SaveFoodViewModel saveFoodViewModel in value)
             {
@@ -97,17 +105,7 @@ namespace TheChallenge.Controllers
             if(mealRepository.SaveMeals(meals))
                 return new HttpResponseMessage(System.Net.HttpStatusCode.Created);
             else
-                return new HttpResponseMessage(System.Net.HttpStatusCode.Conflict);
-        }
-
-        // PUT /api/food/5
-        public void Put(int id, string value)
-        {
-        }
-
-        // DELETE /api/food/5
-        public void Delete(int id)
-        {
+                return new HttpResponseMessage(System.Net.HttpStatusCode.InternalServerError) { ReasonPhrase = "unable to save food" };
         }
     }
 }

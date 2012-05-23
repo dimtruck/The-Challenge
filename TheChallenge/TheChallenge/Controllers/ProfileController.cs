@@ -19,12 +19,6 @@ namespace TheChallenge.Controllers
             this.repository = repository;
         }
 
-        // GET /api/profile
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
-
         // GET /api/profile/current
         [CustomAuthorize]
         public IList<CurrentLiftsViewModel> Get(String current)
@@ -70,22 +64,6 @@ namespace TheChallenge.Controllers
             }
 
             return currentLiftsList;
-        }
-
-
-        // POST /api/profile
-        public void Post(string value)
-        {
-        }
-
-        // PUT /api/profile/5
-        public void Put(int id, string value)
-        {
-        }
-
-        // DELETE /api/profile/5
-        public void Delete(int id)
-        {
         }
     }
 }

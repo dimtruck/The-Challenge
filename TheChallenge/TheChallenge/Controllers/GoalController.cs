@@ -26,33 +26,11 @@ namespace TheChallenge.Controllers
             IList<ContestEventGoal> contestEventGoalList = repository.RetrieveGoals();
             IList<ContestEventGoalViewModel> contestEventViewModelList = new List<ContestEventGoalViewModel>();
 
-            foreach (ContestEventGoal contestEventGoal in contestEventGoalList)
-            {
-                contestEventViewModelList.Add(AutoMapper.Mapper.Map<ContestEventGoalViewModel>(contestEventGoal));
-            }
+            if (contestEventGoalList != null)
+                foreach (ContestEventGoal contestEventGoal in contestEventGoalList)
+                    contestEventViewModelList.Add(AutoMapper.Mapper.Map<ContestEventGoalViewModel>(contestEventGoal));
 
             return contestEventViewModelList;
-        }
-
-        // GET /api/goal/5
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST /api/goal
-        public void Post(string value)
-        {
-        }
-
-        // PUT /api/goal/5
-        public void Put(int id, string value)
-        {
-        }
-
-        // DELETE /api/goal/5
-        public void Delete(int id)
-        {
         }
     }
 }

@@ -19,18 +19,6 @@ namespace TheChallenge.Controllers
             this.repository = repository;
         }
 
-        // GET /api/signin
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
-
-        // GET /api/signin/5
-        public string Get(int id)
-        {
-            return "value";
-        }
-
         // POST /api/signin
         public HttpResponseMessage Post(LoginViewModel value)
         {
@@ -43,7 +31,7 @@ namespace TheChallenge.Controllers
             {
                 HttpResponseMessage response = new HttpResponseMessage()
                 {
-                    StatusCode = System.Net.HttpStatusCode.NoContent
+                    StatusCode = System.Net.HttpStatusCode.OK
                 };
 
                 response.Headers.Add("TC-Authorization", Crypto.EncryptStringAES(value.UserName + ":" + Crypto.EncryptStringAES(value.Password)));
@@ -57,16 +45,6 @@ namespace TheChallenge.Controllers
                     StatusCode = System.Net.HttpStatusCode.Unauthorized
                 };
             }
-        }
-
-        // PUT /api/signin/5
-        public void Put(int id, string value)
-        {
-        }
-
-        // DELETE /api/signin/5
-        public void Delete(int id)
-        {
         }
     }
 }

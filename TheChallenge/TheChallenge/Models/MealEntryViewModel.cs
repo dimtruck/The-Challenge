@@ -13,6 +13,10 @@ namespace TheChallenge.Models
         public String FoodId { get; set; }
         public double ServingSize { get; set; }
         public String ServingId { get; set; }
+        public decimal TotalCalories { get; set; }
+        public decimal TotalCarbs { get; set; }
+        public decimal TotalFats { get; set; }
+        public decimal TotalProtein { get; set; }
 
         public ServingViewModel SelectedServing { get; set; }
         public IList<NutrientViewModel> CalculatedNutrients { get; set; }

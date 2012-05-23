@@ -327,11 +327,11 @@
         <div id ="sign-in-information">
             <div>
                 <label for="sign-in-name">User Name:</label>
-                <input type="text" id="sign-in-name" data-bind="value: signInName" />
+                <input type="text" id="sign-in-name" data-bind="value: signInName" /><br />
             </div>
 		    <div>
                 <label for="sign-in-password">Password:</label>
-                <input type="password" id="sign-in-password"  data-bind="value: signInPassword" />
+                <input type="password" id="sign-in-password"  data-bind="value: signInPassword" /><br />
 		    </div>
 		    <button id="sign-in" class="k-button" data-bind="click: signIn">Sign In</button>
 		    <button id="view-register" class="k-button">Not registered?</button>
@@ -341,15 +341,15 @@
         <div id ="register-information">
             <div>
                 <label for="register-name">User Name:</label>
-                <input type="text" id="register-name" data-bind="value: registerName"  />
+                <input type="text" id="register-name" data-bind="value: registerName"  /><br />
             </div>
 		    <div>
                 <label for="register-password">Password:</label>
-                <input type="password" id="register-password" data-bind="value: registerPassword" />
+                <input type="password" id="register-password" data-bind="value: registerPassword" /><br />
 		    </div>
 		    <div>
                 <label for="confirm-register-password">Confirm Password:</label>
-                <input type="password" id="confirm-register-password" data-bind="value: confirmPassword" validationMessage="Please verify that confirmed password and password match." />
+                <input type="password" id="confirm-register-password" data-bind="value: confirmPassword" validationMessage="Please verify that confirmed password and password match." /><br />
 		    </div>
 		    <button id="register" class="k-button" data-bind="click: register">Register</button>
         </div>
@@ -513,7 +513,6 @@
 
             $("#currentLiftsTable").kendoGrid({
                 dataSource: currentLiftsSource,
-                groupable: true,
                 pageable: true,
                 columns: [
 				{
@@ -625,7 +624,13 @@
                                     group: {
                                         field: 'EntryDate' ,
                                         value: "Time"
-                                    }
+                                    },
+                                    aggregate: [
+                                        { field: "TotalCalories", aggregate: "sum" },
+                                        { field: "TotalCarbs", aggregate: "sum" },
+                                        { field: "TotalFats", aggregate: "sum" },
+                                        { field: "TotalProtein", aggregate: "sum" }
+                                    ]
                                 },
                                 pageSize: 5,
                                 detailTemplate: kendo.template($("#meal-nutrient-template").html()),
@@ -635,7 +640,7 @@
                                     detailRow.find(".meal-nutrients").kendoGrid({
                                         dataSource: {
                                             data: e.data.CalculatedNutrients,
-                                            pageSize: 5,
+                                            pageSize: 5
                                         },
                                         scrollable: true,
                                         sortable: true,
@@ -648,16 +653,17 @@
                                         ]
                                     });
                                 },
-                                dataBound: function () {
-                                    this.expandRow(this.tbody.find("tr.k-master-row").first());
-                                },
                                 scrollable: true,
                                 sortable: true,
                                 pageable: true,
                                 columns: [
                                     { field: "Name", title: "Name", width: 100 },
                                     { field: "ServingSize", title: "Amount" },
-                                    { field: "SelectedServing.Description", title: "Units" }
+                                    { field: "SelectedServing.Description", title: "Units" },
+                                    { field: "TotalCarbs", title: "Carbs",footerTemplate: "#=sum#" },
+                                    { field: "TotalFats", title: "Fats",footerTemplate: "#=sum#" },
+                                    { field: "TotalProtein", title: "Protein",footerTemplate: "#=sum#" },
+                                    { field: "TotalCalories", title: "Calories",footerTemplate: "#=sum#" }
                                 ]
                             });
                         }
@@ -901,7 +907,8 @@
                         url: '@Url.RouteUrl("Foods", new { httproute = "" })'
                     },
                     type: 'json'
-                }
+                },
+                filter: "contains"
             }),
             servingTypes: 0,
             entryDate: new Date(),
@@ -918,8 +925,8 @@
                     },
                     success: function (result) {
                         //get servings
-                        self.set("servingTypes",new kendo.data.DataSource({data: result.AvailableServings}));
-                        self.set("dietServingType",result.AvailableServings[0]);
+                        self.set("servingTypes",new kendo.data.DataSource({data: result.Servings}));
+                        self.set("dietServingType",result.Servings[0]);
                        // self.get("servingTypes").read();
                     },
                     error: function (returnedObject, t2, t3) {
@@ -1151,6 +1158,7 @@
         $('#food-repository').kendoAutoComplete({
             select: selectFood,
             dataTextField: "Name",
+            filter: "contains",
             dataSource: foodSource
         });
 
@@ -1170,7 +1178,7 @@
                             LoadNutritionalTable(this.dataItem(e.item.index()).WeightInGrams, result);
                         },
                         template: "${ data.Amount } - ${ data.Description }",
-                        dataSource: result.AvailableServings
+                        dataSource: result.Servings
                     });
                     LoadNutritionalTable($("#serving-repository-view").data('kendoDropDownList').dataItem(0).WeightInGrams, result);
                 },
@@ -1199,7 +1207,7 @@
                 pageable: true,
                 sortable: true,
                 dataSource: {
-                    data: result.AvailableNutrients,
+                    data: result.Nutrients,
                     pageSize: 10
                 }
             });

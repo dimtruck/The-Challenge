@@ -27,23 +27,26 @@ namespace TheChallenge.Controllers
         {
             IList<Event> eventList = this.repository.RetrieveExercises();
             IList<EventViewModel> eventViewModelList = new List<EventViewModel>();
-            foreach (Event eventModel in eventList)
-                eventViewModelList.Add(AutoMapper.Mapper.Map<EventViewModel>(eventModel));
+            if (eventList != null)
+                foreach (Event eventModel in eventList)
+                    eventViewModelList.Add(AutoMapper.Mapper.Map<EventViewModel>(eventModel));
 
             return eventViewModelList;
-        }
-
-        // GET /api/exercise/5
-        public string Get(int id)
-        {
-            return "value";
         }
 
         // POST /api/exercise
         [CustomAuthorize]
         public HttpResponseMessage Post(SaveWorkoutViewModel value)
         {
-            Workout workout = new Workout(){
+            //TODO: move to validation logic
+            if (value == null)
+                return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest) { ReasonPhrase = "no valid request content present" };
+            if(value.EntryDate == null || value.EntryDate == DateTime.MinValue || value.EntryDate == DateTime.MaxValue)
+                return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest) { ReasonPhrase = "no valid date present" };
+            if (value.Exercises == null || value.Exercises.Count == 0)
+                return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest) { ReasonPhrase = "no exercises present" };
+            Workout workout = new Workout()
+            {
                 ExerciseEntries = new List<ExerciseEntry>(),
                 WorkoutDate = value.EntryDate.Date
             };
@@ -51,18 +54,10 @@ namespace TheChallenge.Controllers
             {
                 workout.ExerciseEntries.Add(AutoMapper.Mapper.Map<ExerciseEntry>(saveExerciseViewModel));
             }
-            workoutRepository.SaveWorkout(workout);
-            return new HttpResponseMessage(System.Net.HttpStatusCode.Created);
-        }
-
-        // PUT /api/exercise/5
-        public void Put(int id, string value)
-        {
-        }
-
-        // DELETE /api/exercise/5
-        public void Delete(int id)
-        {
+            if (workoutRepository.SaveWorkout(workout))
+                return new HttpResponseMessage(System.Net.HttpStatusCode.Created);
+            else
+                return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest) { ReasonPhrase = "unable to save workout" };
         }
     }
 }

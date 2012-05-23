@@ -40,20 +40,5 @@ namespace TheChallenge.Controllers
             }
             return saveExerciseViewModelList;
         }
-
-        // POST /api/workout
-        public void Post(string value)
-        {
-        }
-
-        // PUT /api/workout/5
-        public void Put(int id, string value)
-        {
-        }
-
-        // DELETE /api/workout/5
-        public void Delete(int id)
-        {
-        }
     }
 }

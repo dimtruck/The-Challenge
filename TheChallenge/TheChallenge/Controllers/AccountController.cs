@@ -20,8 +20,9 @@ namespace TheChallenge.Controllers
 
         public HttpResponseMessage Get()
         {
-            this.Request.Headers.Remove("TC-Authorization");
-            return new HttpResponseMessage(System.Net.HttpStatusCode.NoContent);
+            if(Request.Headers != null)
+                this.Request.Headers.Remove("TC-Authorization");
+            return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
         }
 
         // POST /api/account
@@ -50,16 +51,6 @@ namespace TheChallenge.Controllers
                 };
 
             }
-        }
-
-        // PUT /api/account/5
-        public void Put(int id, string value)
-        {
-        }
-
-        // DELETE /api/account/5
-        public void Delete(int id)
-        {
         }
     }
 }

@@ -133,6 +133,18 @@ namespace Domain.Repository
                             });
                         }
                     }
+                    Nutrient protein = entry.CalculatedNutrients.FirstOrDefault(t => t.Description.Equals("Protein"));
+                    if (protein != null)
+                        entry.TotalProtein += protein.AmountIn100Grams;
+                    Nutrient fat = entry.CalculatedNutrients.FirstOrDefault(t => t.Description.Equals("Total lipid (fat)"));
+                    if (fat != null)
+                        entry.TotalFats += fat.AmountIn100Grams;
+                    Nutrient cho = entry.CalculatedNutrients.FirstOrDefault(t => t.Description.Equals("Carbohydrate, by difference"));
+                    if (cho != null)
+                        entry.TotalCarbs += cho.AmountIn100Grams;
+                    Nutrient calories = entry.CalculatedNutrients.FirstOrDefault(t => t.Description.Equals("Energy"));
+                    if (calories != null)
+                        entry.TotalCalories += calories.AmountIn100Grams;
                 }
             }
 

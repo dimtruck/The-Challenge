@@ -12,6 +12,8 @@ namespace TheChallenge.Helpers
     {
         protected override string ResolveCore(ContestEvent source)
         {
+            if (String.IsNullOrEmpty(source.EventType))
+                return string.Empty;
             if (source.EventType.Equals("MAX"))
                 return "Lift as much as possible.";
             if (source.EventType.Equals("WEIGHTDISTANCE"))
