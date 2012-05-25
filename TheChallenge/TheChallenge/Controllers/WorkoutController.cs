@@ -34,10 +34,9 @@ namespace TheChallenge.Controllers
         {
             Workout workout = repository.GetWorkout(entryDate);
             IList<SaveExerciseViewModel> saveExerciseViewModelList = new List<SaveExerciseViewModel>();
-            foreach (ExerciseEntry exerciseEntry in workout.ExerciseEntries)
-            {
-                saveExerciseViewModelList.Add(AutoMapper.Mapper.Map<SaveExerciseViewModel>(exerciseEntry));
-            }
+            if (workout != null && workout.ExerciseEntries != null)
+                foreach (ExerciseEntry exerciseEntry in workout.ExerciseEntries)
+                    saveExerciseViewModelList.Add(AutoMapper.Mapper.Map<SaveExerciseViewModel>(exerciseEntry));
             return saveExerciseViewModelList;
         }
     }

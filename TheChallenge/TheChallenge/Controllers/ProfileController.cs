@@ -58,10 +58,9 @@ namespace TheChallenge.Controllers
             IList<CurrentStatistic> currentStatisticList = repository.RetrieveProfile();
             IList<CurrentLiftsViewModel> currentLiftsList = new List<CurrentLiftsViewModel>();
 
-            foreach (CurrentStatistic statistic in currentStatisticList)
-            {
-                currentLiftsList.Add(AutoMapper.Mapper.Map<CurrentLiftsViewModel>(statistic));
-            }
+            if (currentStatisticList != null)
+                foreach (CurrentStatistic statistic in currentStatisticList)
+                    currentLiftsList.Add(AutoMapper.Mapper.Map<CurrentLiftsViewModel>(statistic));
 
             return currentLiftsList;
         }

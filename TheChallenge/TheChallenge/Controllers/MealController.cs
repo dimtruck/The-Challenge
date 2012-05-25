@@ -23,8 +23,9 @@ namespace TheChallenge.Controllers
         {
             IList<FoodEntry> foodEntries = repository.GetFoodEntries(entryDate);
             IList<MealEntryViewModel> mealEntryViewModels = new List<MealEntryViewModel>();
-            foreach (FoodEntry foodEntry in foodEntries)
-                mealEntryViewModels.Add(AutoMapper.Mapper.Map<MealEntryViewModel>(foodEntry));
+            if (foodEntries != null)
+                foreach (FoodEntry foodEntry in foodEntries)
+                    mealEntryViewModels.Add(AutoMapper.Mapper.Map<MealEntryViewModel>(foodEntry));
             
             return mealEntryViewModels;
         }
