@@ -40,10 +40,14 @@ namespace TheChallenge.Controllers
             }
             else
             {
-                return new HttpResponseMessage()
+                HttpResponseMessage response = new HttpResponseMessage()
                 {
-                    StatusCode = System.Net.HttpStatusCode.Unauthorized
+                    StatusCode = System.Net.HttpStatusCode.OK,
+                    ReasonPhrase = "Unable to validate user id and password combination"
                 };
+                //this is a hack!  It violates the spec because every 401 response should return www-authenticate header.  However, that makes browsers create a popup.
+                response.Headers.WwwAuthenticate.Clear();
+                return response;
             }
         }
     }

@@ -16,6 +16,7 @@ using Castle.Windsor.Configuration.Interpreters;
 using Domain.Entities;
 using TheChallenge.Models;
 using System.Web.WebPages;
+using StackExchange.Profiling;
 
 namespace TheChallenge
 {
@@ -155,6 +156,19 @@ namespace TheChallenge
 
 
 
+        }
+
+        protected void Application_BeginRequest()
+        {
+            if (Request.IsLocal)
+            {
+                MiniProfiler.Start();
+            }
+        }
+
+        protected void Application_EndRequest()
+        {
+            MiniProfiler.Stop();
         }
 
         private void RegisterMappers()

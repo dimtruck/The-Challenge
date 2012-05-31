@@ -34,6 +34,18 @@
     <Reference Include="Dapper">
       <HintPath>..\packages\Dapper.1.8\lib\net40\Dapper.dll</HintPath>
     </Reference>
+    <Reference Include="ServiceStack.Common">
+      <HintPath>..\packages\ServiceStack.Common.3.7.9\lib\net35\ServiceStack.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Interfaces">
+      <HintPath>..\packages\ServiceStack.Common.3.7.9\lib\net35\ServiceStack.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Redis">
+      <HintPath>..\packages\ServiceStack.Redis.3.7.9\lib\net35\ServiceStack.Redis.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Text">
+      <HintPath>..\packages\ServiceStack.Text.3.7.9\lib\net35\ServiceStack.Text.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -43,6 +55,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cache\ContestClient.cs" />
+    <Compile Include="Cache\WorkoutClient.cs" />
     <Compile Include="Entities\ContestEvent.cs" />
     <Compile Include="Entities\ContestEventGoal.cs" />
     <Compile Include="Entities\CurrentStatistic.cs" />
@@ -55,6 +69,10 @@
     <Compile Include="Entities\Serving.cs" />
     <Compile Include="Entities\User.cs" />
     <Compile Include="Entities\Workout.cs" />
+    <Compile Include="Factory\ContestFactory.cs" />
+    <Compile Include="Factory\Interfaces\IContestFactory.cs" />
+    <Compile Include="Factory\Interfaces\IWorkoutFactory.cs" />
+    <Compile Include="Factory\WorkoutFactory.cs" />
     <Compile Include="Repository\ContestRepository.cs" />
     <Compile Include="Entities\Contest.cs" />
     <Compile Include="Repository\FoodRepository.cs" />
@@ -75,6 +93,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -38,7 +38,7 @@ namespace TheChallenge.Controllers
                     StatusCode = System.Net.HttpStatusCode.Created
                 };
 
-                response.Headers.Add("TC-Authorization", Crypto.EncryptStringAES(value.UserName + ":" + value.Password));
+                response.Headers.Add("TC-Authorization", Crypto.EncryptStringAES(value.UserName + ":" + Crypto.EncryptStringAES(value.Password)));
                 response.Headers.Age = new TimeSpan(DateTime.Now.AddHours(1).Ticks);
                 return response;
             }

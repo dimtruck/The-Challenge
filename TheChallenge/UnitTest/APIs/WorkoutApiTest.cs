@@ -12,6 +12,7 @@ using TheChallenge.Controllers;
 using System.Net.Http;
 using System.Net;
 using TheChallenge.Helpers;
+using Domain.Factory.Interfaces;
 
 namespace UnitTest.APIs
 {
@@ -19,6 +20,7 @@ namespace UnitTest.APIs
     class WorkoutApiTest
     {
         private Mock<IWorkoutRepository> workoutRepositoryMock = new Mock<IWorkoutRepository>();
+        private Mock<IWorkoutFactory> workoutFactoryMock = new Mock<IWorkoutFactory>();
 
         [TestFixtureSetUp]
         public void FixtureSetup()
@@ -48,7 +50,7 @@ namespace UnitTest.APIs
                 new DateTime(2012,1,1)
             });
 
-            WorkoutController controller = new WorkoutController(workoutRepositoryMock.Object);
+            WorkoutController controller = new WorkoutController(workoutRepositoryMock.Object, workoutFactoryMock.Object);
             var results = controller.Get() as IEnumerable<DateTime>;
 
             Assert.IsNotNull(results);
@@ -63,7 +65,7 @@ namespace UnitTest.APIs
             IList<DateTime> dates = null;
             workoutRepositoryMock.Setup(t => t.GetWorkoutDates()).Returns(dates);
 
-            WorkoutController controller = new WorkoutController(workoutRepositoryMock.Object);
+            WorkoutController controller = new WorkoutController(workoutRepositoryMock.Object, workoutFactoryMock.Object);
             var results = controller.Get() as IEnumerable<DateTime>;
 
             Assert.IsNull(results);
@@ -99,7 +101,7 @@ namespace UnitTest.APIs
                 WorkoutDate = new DateTime(2010,1,1)
             });
 
-            WorkoutController controller = new WorkoutController(workoutRepositoryMock.Object);
+            WorkoutController controller = new WorkoutController(workoutRepositoryMock.Object, workoutFactoryMock.Object);
             var results = controller.Get(DateTime.Now) as IEnumerable<SaveExerciseViewModel>;
 
             Assert.IsNotNull(results);
@@ -114,7 +116,7 @@ namespace UnitTest.APIs
             Workout workout = null;
             workoutRepositoryMock.Setup(t => t.GetWorkout(It.IsAny<DateTime>())).Returns(workout);
 
-            WorkoutController controller = new WorkoutController(workoutRepositoryMock.Object);
+            WorkoutController controller = new WorkoutController(workoutRepositoryMock.Object, workoutFactoryMock.Object);
             var results = controller.Get(DateTime.Now) as IEnumerable<SaveExerciseViewModel>;
 
             Assert.IsNotNull(results);

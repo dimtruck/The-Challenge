@@ -12,6 +12,7 @@ using TheChallenge.Controllers;
 using System.Net.Http;
 using System.Net;
 using TheChallenge.Helpers;
+using Domain.Factory.Interfaces;
 
 namespace UnitTest.APIs
 {
@@ -19,6 +20,7 @@ namespace UnitTest.APIs
     public class ContestApiTest
     {
         private Mock<IContestRepository> contestRepositoryMock = new Mock<IContestRepository>();
+        private Mock<IContestFactory> contestFactoryMock = new Mock<IContestFactory>();
 
         [TestFixtureSetUp]
         public void FixtureSetup()
@@ -50,7 +52,7 @@ namespace UnitTest.APIs
                 new Contest() { ContestName = "test3"}
             });
 
-            ContestController controller = new ContestController(contestRepositoryMock.Object);
+            ContestController controller = new ContestController(contestFactoryMock.Object, contestRepositoryMock.Object);
             var results = controller.Get() as IEnumerable<ContestViewModel>;
 
             Assert.IsNotNull(results);
@@ -64,7 +66,7 @@ namespace UnitTest.APIs
             IList<Contest> contests = null;
             contestRepositoryMock.Setup(t => t.RetrieveContests()).Returns(contests);
 
-            ContestController controller = new ContestController(contestRepositoryMock.Object);
+            ContestController controller = new ContestController(contestFactoryMock.Object, contestRepositoryMock.Object);
             var results = controller.Get() as IEnumerable<ContestViewModel>;
 
             Assert.IsNotNull(results);
@@ -80,7 +82,7 @@ namespace UnitTest.APIs
                 new ContestEvent() { EventDescription = "test3"}
             });
 
-            ContestController controller = new ContestController(contestRepositoryMock.Object);
+            ContestController controller = new ContestController(contestFactoryMock.Object, contestRepositoryMock.Object);
             var results = controller.Get(0) as IEnumerable<ContestEventViewModel>;
 
             Assert.IsNotNull(results);
@@ -94,7 +96,7 @@ namespace UnitTest.APIs
             IList<ContestEvent> contestEvents = null;
             contestRepositoryMock.Setup(t => t.RetrieveContestEvents(It.IsAny<int>())).Returns(contestEvents);
 
-            ContestController controller = new ContestController(contestRepositoryMock.Object);
+            ContestController controller = new ContestController(contestFactoryMock.Object, contestRepositoryMock.Object);
             var results = controller.Get(0) as IEnumerable<ContestEventViewModel>;
 
             Assert.IsNotNull(results);

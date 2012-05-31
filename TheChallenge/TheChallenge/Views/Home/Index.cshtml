@@ -2,6 +2,7 @@
     Layout = null;
 }
 
+@using StackExchange.Profiling;
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,6 +11,11 @@
     <link href="@System.Web.Optimization.BundleTable.Bundles.ResolveBundleUrl("~/Content/kendo/css")" rel="stylesheet" type="text/css" />
     <meta name="viewport" content="width=device-width" />
     <style>
+        .error
+        {
+            color:Red;
+        }
+        
         #serving-repository-view
         {
             display:none;
@@ -325,32 +331,25 @@
     </div>
     <div class="pop-up-window" id="sign-in-window">
         <div id ="sign-in-information">
-            <div>
-                <label for="sign-in-name">User Name:</label>
-                <input type="text" id="sign-in-name" data-bind="value: signInName" /><br />
-            </div>
-		    <div>
-                <label for="sign-in-password">Password:</label>
-                <input type="password" id="sign-in-password"  data-bind="value: signInPassword" /><br />
-		    </div>
-		    <button id="sign-in" class="k-button" data-bind="click: signIn">Sign In</button>
-		    <button id="view-register" class="k-button">Not registered?</button>
+            <label for="sign-in-name">User Name:</label>
+            <input type="text" required id="sign-in-name" name="sign-in-name" validationMessage="Please enter your name" data-bind="value: signInName" /><br />
+
+            <label for="sign-in-password">Password:</label>
+            <input type="password" required id="sign-in-password" name="sign-in-password" validationMessage="Please enter your password" data-bind="value: signInPassword" /><br />
+
+		    <button id="sign-in" tabindex=3 class="k-button" data-bind="click: signIn">Sign In</button>
+		    <button id="view-register" class="k-button">Not registered?</button><br />
+            <span class="error" id="sign-in-error" data-bind="text: errorMessage" />
         </div>
     </div>
     <div class="pop-up-window" id="register-window">
         <div id ="register-information">
-            <div>
-                <label for="register-name">User Name:</label>
-                <input type="text" id="register-name" data-bind="value: registerName"  /><br />
-            </div>
-		    <div>
-                <label for="register-password">Password:</label>
-                <input type="password" id="register-password" data-bind="value: registerPassword" /><br />
-		    </div>
-		    <div>
-                <label for="confirm-register-password">Confirm Password:</label>
-                <input type="password" id="confirm-register-password" data-bind="value: confirmPassword" validationMessage="Please verify that confirmed password and password match." /><br />
-		    </div>
+            <label for="register-name">User Name:</label>
+            <input type="text" id="register-name" required validationMessage="Please enter your name" name="register-name" data-bind="value: registerName"  /><br />
+            <label for="register-password">Password:</label>
+            <input type="password" id="register-password" required validationMessage="Please enter your password" name="register-password"  data-bind="value: registerPassword" /><br />
+            <label for="confirm-register-password">Confirm Password:</label>
+            <input type="password" id="confirm-register-password" name="confirm-register-password" data-bind="value: confirmPassword" validationMessage="Please verify that confirmed password and password match." /><br />
 		    <button id="register" class="k-button" data-bind="click: register">Register</button>
         </div>
     </div>
@@ -607,7 +606,7 @@
                 $('#add-workout-id').css('display', 'none');
                 $('#add-diet-id').css('display', 'none');
                 //here add call to meal view too
-                //var mealUrl = '@Url.RouteUrl("MealDates",new { httproute = "" })';
+                //var mealUrl = '@Url.RouteUrl("MealDates", new { httproute = "" })';
                 $.ajax('@Url.RouteUrl("MealDates", new { httproute = "" })/' + kendo.toString(this.value(), 'MM-dd-yyyy'), {
                     type: 'get',
                     contentType: 'application/json',
@@ -753,7 +752,7 @@
                             beforeSend: function (XMLHttpRequest) {
                                 XMLHttpRequest.setRequestHeader("TC-Authorization", tcAuthorizationToken != null ? tcAuthorizationToken : localStorage.getItem('TC-Authorization'));
                             },
-                            url: '@Url.RouteUrl("ContestEvents", new {httproute = "" })/' + e.data.ContestId
+                            url: '@Url.RouteUrl("ContestEvents", new { httproute = "" })/' + e.data.ContestId
                         },
                         type: 'json'
                     },
@@ -802,6 +801,7 @@
                 }
             }
         }).data('kendoValidator');
+        var signinValidatable = $("#sign-in-information").kendoValidator().data('kendoValidator');
 
         var viewModel = kendo.observable({
             events: new kendo.data.DataSource({
@@ -1047,24 +1047,36 @@
         var signInModel = kendo.observable({
             signInName: '',
             signInPassword: '',
+            errorMessage: '',
             signIn: function () {
                 var self = this;
-                $.ajax('@Url.RouteUrl("SignIn", new { httproute = "" })', {
-                    data: JSON.stringify({ UserName: this.get('signInName'), Password: this.get('signInPassword') }),
-                    type: 'post', contentType: 'application/json',
-                    success: function (result, status, xmlResponse) {
-                        tcAuthorizationToken = xmlResponse.getResponseHeader('TC-Authorization');
-                        localStorage.setItem('TC-Authorization', xmlResponse.getResponseHeader('TC-Authorization'));
-                        var window = $("#sign-in-window").data('kendoWindow');
-                        window.close();
-                        InitiateUserData();
-                    },
-                    error: function (returnedObject, t2, t3) {
-                        console.log(returnedObject);
-                        console.log(t2);
-                        console.log(t3);
-                    }
-                });
+                self.set("errorMessage",'');
+                if(signinValidatable.validate()){
+                    $.ajax('@Url.RouteUrl("SignIn", new { httproute = "" })', {
+                        data: JSON.stringify({ UserName: this.get('signInName'), Password: this.get('signInPassword') }),
+                        type: 'post', contentType: 'application/json',
+                        beforeSend: function(xhr) {
+                            xhr.setRequestHeader("X-MicrosoftAjax","Delta=true");
+                        },
+                        success: function (result, status, xmlResponse) {
+                            if(xmlResponse.statusText === "Unable to validate user id and password combination"){
+                                self.set("errorMessage","Unable to log this user in. Please verify your credentials.");
+                            }else{
+                                console.log('logged in');
+                                tcAuthorizationToken = xmlResponse.getResponseHeader('TC-Authorization');
+                                localStorage.setItem('TC-Authorization', xmlResponse.getResponseHeader('TC-Authorization'));
+                                var window = $("#sign-in-window").data('kendoWindow');
+                                window.close();
+                                InitiateUserData();
+                            }
+                        },
+                        error: function (returnedObject, t2, statusCode) {
+                            console.log(returnedObject);
+                            console.log(t2);
+                            console.log(statusCode);
+                        }
+                    });
+                }
             }
         });
 
@@ -1214,4 +1226,5 @@
         }
     });
 </script>
+@MiniProfiler.RenderIncludes()
 </html>

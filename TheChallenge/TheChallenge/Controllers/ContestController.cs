@@ -8,15 +8,18 @@ using Domain.Entities;
 using TheChallenge.Models;
 using Domain.Repository;
 using TheChallenge.Helpers;
+using Domain.Factory.Interfaces;
 
 namespace TheChallenge.Controllers
 {
     public class ContestController : ApiController
     {
         private readonly IContestRepository repository;
+        private readonly IContestFactory factory;
 
-        public ContestController(IContestRepository repository)
+        public ContestController(IContestFactory factory, IContestRepository repository)
         {
+            this.factory = factory;
             this.repository = repository;
         }
 
@@ -24,7 +27,7 @@ namespace TheChallenge.Controllers
         [CustomAuthorize]
         public IEnumerable<ContestViewModel> Get()
         {
-            IList<Contest> contestList = this.repository.RetrieveContests();
+            IList<Contest> contestList = this.factory.RetrieveContests(repository);
             IList<ContestViewModel> contestViewModelList = new List<ContestViewModel>();
             if (contestList != null)
                 foreach (Contest contest in contestList)
@@ -38,7 +41,7 @@ namespace TheChallenge.Controllers
         public IList<ContestEventViewModel> Get(int id)
         {
             //get all events for that contest
-            IList<ContestEvent> contestEventList = this.repository.RetrieveContestEvents(id);
+            IList<ContestEvent> contestEventList = this.factory.RetrieveContestEvents(id, repository);
             IList<ContestEventViewModel> contestEventViewModelList = new List<ContestEventViewModel>();
             if (contestEventList != null)
                 foreach (ContestEvent contestEvent in contestEventList)

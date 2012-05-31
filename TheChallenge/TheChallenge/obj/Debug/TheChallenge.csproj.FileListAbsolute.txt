@@ -47,3 +47,15 @@ C:\Users\Dimitry\The-Challenge\TheChallenge\TheChallenge\bin\AutoMapper.xml
 C:\Users\Dimitry\The-Challenge\TheChallenge\TheChallenge\bin\Glimpse.Core.dll
 C:\Users\Dimitry\The-Challenge\TheChallenge\TheChallenge\bin\Glimpse.Mvc3.dll
 C:\Users\Dimitry\The-Challenge\TheChallenge\TheChallenge\bin\WebActivator.dll
+C:\Users\Dimitry\The-Challenge\TheChallenge\TheChallenge\bin\ServiceStack.Redis.dll
+C:\Users\Dimitry\The-Challenge\TheChallenge\TheChallenge\bin\ServiceStack.Interfaces.dll
+C:\Users\Dimitry\The-Challenge\TheChallenge\TheChallenge\bin\ServiceStack.Common.dll
+C:\Users\Dimitry\The-Challenge\TheChallenge\TheChallenge\bin\ServiceStack.Redis.pdb
+C:\Users\Dimitry\The-Challenge\TheChallenge\TheChallenge\bin\ServiceStack.Redis.xml
+C:\Users\Dimitry\The-Challenge\TheChallenge\TheChallenge\bin\ServiceStack.Interfaces.pdb
+C:\Users\Dimitry\The-Challenge\TheChallenge\TheChallenge\bin\ServiceStack.Interfaces.xml
+C:\Users\Dimitry\The-Challenge\TheChallenge\TheChallenge\bin\ServiceStack.Common.pdb
+C:\Users\Dimitry\The-Challenge\TheChallenge\TheChallenge\bin\ServiceStack.Common.xml
+C:\Users\Dimitry\The-Challenge\TheChallenge\TheChallenge\bin\MiniProfiler.dll
+C:\Users\Dimitry\The-Challenge\TheChallenge\TheChallenge\bin\MiniProfiler.pdb
+C:\Users\Dimitry\The-Challenge\TheChallenge\TheChallenge\bin\MiniProfiler.xml
