@@ -189,6 +189,7 @@
     <Content Include="App_Data\web_browsers_patch.xml" />
     <Content Include="App_Readme\glimpse.mvc3.readme.txt" />
     <Content Include="App_Readme\glimpse.readme.txt" />
+    <Content Include="Content\kendo\thechallenge.css" />
     <Content Include="Content\mobile\images\ajax-loader.gif" />
     <Content Include="Content\mobile\images\ajax-loader.png" />
     <Content Include="Content\mobile\images\icons-18-black.png" />
@@ -297,6 +298,7 @@
     <Content Include="Scripts\mobile\jquery-ui-1.8.11.min.js" />
     <Content Include="Scripts\mobile\jquery.mobile-1.1.0.min.js" />
     <Content Include="Scripts\modernizr-2.0.6-development-only.js" />
+    <Content Include="Scripts\thechallenge.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

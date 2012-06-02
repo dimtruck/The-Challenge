@@ -7,6 +7,7 @@ using Domain.Repository;
 using Domain.Entities;
 using TheChallenge.Models;
 using TheChallenge.Helpers;
+using Domain.Factory.Interfaces;
 
 namespace TheChallenge.Controllers
 {
@@ -14,18 +15,22 @@ namespace TheChallenge.Controllers
     {
         private readonly IFoodRepository repository;
         private readonly IMealRepository mealRepository;
+        private readonly IFoodFactory foodFactory;
+        private readonly IMealFactory mealFactory;
 
-        public FoodController(IFoodRepository repository, IMealRepository mealRepository)
+        public FoodController(IFoodFactory foodFactory, IMealFactory mealFactory, IFoodRepository repository, IMealRepository mealRepository)
         {
             this.repository = repository;
             this.mealRepository = mealRepository;
+            this.foodFactory = foodFactory;
+            this.mealFactory = mealFactory;
         }
 
         // GET /api/food
         [CustomAuthorize]
         public IEnumerable<FoodViewModel> Get()
         {
-            IList<Food> foodList = this.repository.RetrieveFoods();
+            IList<Food> foodList = this.foodFactory.RetrieveFoods(repository);
             IList<FoodViewModel> foodModelList = new List<FoodViewModel>();
             if (foodList != null)
                 foreach (Food food in foodList)
@@ -55,7 +60,7 @@ namespace TheChallenge.Controllers
             //      description (string)
             //      weight_in_grams (float)
             FoodViewModel model = new FoodViewModel();
-            Food food = repository.RetrieveCompleteFood(id);
+            Food food = foodFactory.RetrieveCompleteFood(id,repository);
             if (food != null)
             {
                 model = AutoMapper.Mapper.Map<FoodViewModel>(food);
@@ -102,7 +107,7 @@ namespace TheChallenge.Controllers
                     meals.Add(meal);
                 }
             }
-            if(mealRepository.SaveMeals(meals))
+            if (mealFactory.SaveMeals(meals, mealRepository))
                 return new HttpResponseMessage(System.Net.HttpStatusCode.Created);
             else
                 return new HttpResponseMessage(System.Net.HttpStatusCode.InternalServerError) { ReasonPhrase = "unable to save food" };

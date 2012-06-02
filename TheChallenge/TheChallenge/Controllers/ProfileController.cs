@@ -7,15 +7,18 @@ using TheChallenge.Models;
 using Domain.Repository;
 using Domain.Entities;
 using TheChallenge.Helpers;
+using Domain.Factory.Interfaces;
 
 namespace TheChallenge.Controllers
 {
     public class ProfileController : ApiController
     {
         private readonly IProfileRepository repository;
+        private readonly IProfileFactory factory;
 
-        public ProfileController(IProfileRepository repository)
+        public ProfileController(IProfileFactory factory, IProfileRepository repository)
         {
+            this.factory = factory;
             this.repository = repository;
         }
 
@@ -55,7 +58,7 @@ namespace TheChallenge.Controllers
 				- get all entries in workout table sorted by TIME asc
 					- get first and create DISTANCE'x'WEIGHT'x'TIME tag and return
  */
-            IList<CurrentStatistic> currentStatisticList = repository.RetrieveProfile();
+            IList<CurrentStatistic> currentStatisticList = factory.RetrieveProfile(repository);
             IList<CurrentLiftsViewModel> currentLiftsList = new List<CurrentLiftsViewModel>();
 
             if (currentStatisticList != null)

@@ -31,6 +31,22 @@ namespace TheChallenge.Helpers
                     ImplementedBy<WorkoutFactory>().
                     Interceptors(typeof(MiniProfilerInterceptor)).
                     LifestylePerWebRequest(),
+                Component.For<IExerciseFactory>().
+                    ImplementedBy<ExerciseFactory>().
+                    Interceptors(typeof(MiniProfilerInterceptor)).
+                    LifestylePerWebRequest(),
+                Component.For<IFoodFactory>().
+                    ImplementedBy<FoodFactory>().
+                    Interceptors(typeof(MiniProfilerInterceptor)).
+                    LifestylePerWebRequest(),
+                Component.For<IMealFactory>().
+                    ImplementedBy<MealFactory>().
+                    Interceptors(typeof(MiniProfilerInterceptor)).
+                    LifestylePerWebRequest(),
+                Component.For<IProfileFactory>().
+                    ImplementedBy<ProfileFactory>().
+                    Interceptors(typeof(MiniProfilerInterceptor)).
+                    LifestylePerWebRequest(),
                 Component.For<IContestRepository>().
                     ImplementedBy<ContestRepository>().
                     Interceptors(typeof(MiniProfilerInterceptor)).

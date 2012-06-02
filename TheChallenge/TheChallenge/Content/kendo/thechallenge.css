@@ -1,0 +1,79 @@
+﻿.error
+{
+    color:Red;
+}
+        
+#serving-repository-view
+{
+    display:none;
+}
+#add-workout-panel label,#add-diet-panel label, .pop-up-window label
+{
+    float:left;
+    font-family: 'Lucida Sans Unicode';
+    min-width:160px;
+    font-weight:bold;
+}
+        
+.workoutDate 
+{
+    position:relative;
+    color: green;
+    font-weight:bold;
+    display: inline-block;
+    width: 25px;
+    height: 24px;
+    vertical-align: middle;
+    left: -10px;
+    top: -1px;
+}
+        
+#outer-container
+{
+    margin-top: 80px;
+    width:100%;
+}
+        
+#container
+{
+    margin: 0 auto;
+    width:80%;
+    min-width:800px;
+}
+        
+header
+{
+    position:fixed;
+    top: 0;
+    right: 0;
+    background-color:#333;
+    width: 100%;
+    z-index: 1000;
+}
+        
+header .content-wrapper
+{
+    margin: 0 auto;
+    width: 80%;
+    height: 65px;
+    min-width:800px;
+}
+
+header .content-wrapper .header-info
+{
+    margin-top: 10px;
+}
+
+header .content-wrapper img
+{
+    height: 48px;
+    width: 48px;
+    margin-right: 3em;
+    cursor:pointer;
+}
+        
+header .content-wrapper .last-image
+{
+    margin-right:0;
+    float:right;
+}

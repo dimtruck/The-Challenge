@@ -7,6 +7,7 @@ using Domain.Repository;
 using Domain.Entities;
 using TheChallenge.Models;
 using TheChallenge.Helpers;
+using Domain.Factory.Interfaces;
 
 namespace TheChallenge.Controllers
 {
@@ -14,18 +15,22 @@ namespace TheChallenge.Controllers
     {
         private readonly IExerciseRepository repository;
         private readonly IWorkoutRepository workoutRepository;
+        private readonly IExerciseFactory exerciseFactory;
+        private readonly IWorkoutFactory workoutFactory;
 
-        public ExerciseController(IExerciseRepository repository, IWorkoutRepository workoutRepository)
+        public ExerciseController(IExerciseFactory factory, IWorkoutFactory workoutFactory, IExerciseRepository repository, IWorkoutRepository workoutRepository)
         {
             this.repository = repository;
             this.workoutRepository = workoutRepository;
+            this.exerciseFactory = factory;
+            this.workoutFactory = workoutFactory;
         }
 
         // GET /api/exercise
         [CustomAuthorize]
         public IEnumerable<EventViewModel> Get()
         {
-            IList<Event> eventList = this.repository.RetrieveExercises();
+            IList<Event> eventList = this.exerciseFactory.RetrieveExercises(repository);
             IList<EventViewModel> eventViewModelList = new List<EventViewModel>();
             if (eventList != null)
                 foreach (Event eventModel in eventList)
@@ -54,7 +59,7 @@ namespace TheChallenge.Controllers
             {
                 workout.ExerciseEntries.Add(AutoMapper.Mapper.Map<ExerciseEntry>(saveExerciseViewModel));
             }
-            if (workoutRepository.SaveWorkout(workout))
+            if (workoutFactory.SaveWorkout(workout, workoutRepository))
                 return new HttpResponseMessage(System.Net.HttpStatusCode.Created);
             else
                 return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest) { ReasonPhrase = "unable to save workout" };
